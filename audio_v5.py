@@ -7,11 +7,32 @@ from random import Random
 from datetime import datetime
 import logging
 
+# (v1) random numbers - max 8 numbers. crop the file.
+# (v2) two words only - both words should be more than 5 chars long
+# (v3) (a) full phrase with last two words with noise; (b) full phrase with full noise
+# (v4) full phrase with full noise
+
+CAPTCHA_TYPE = "3b"
+
+# Creds for Alumni Id
+IBM_PASSWORD = '6CF3APtNufSo'
+IBM_USERNAME = 'f098576e-335f-4f3c-95d3-c8276453af52'
+
+# Creds for gmail id - rohun.tripathi.5 - expired
+# IBM_PASSWORD = 'fxjnB8cpGMOJ'
+# IBM_USERNAME = 'e53ab2a7-8a91-41ae-8304-d1cf44c00962'
+
+# Creds for IBM id. - not to use.
+# IBM_PASSWORD = 'uQnccEAUC2CE'
+# IBM_USERNAME = '8de9146e-c657-48d5-b4e2-cfdf5ad0fc4f'
+
+##################
+
 import function_library as func_lib
 import word_list_format
 import consecutive_words_format
 
-OUT_TAG = "REFACTORED" + "_" + func_lib.NOISE_TYPE + "_" + "YT" + "_VERSION_" + func_lib.VERSION_NUMBER
+OUT_TAG = "REFACTORED" + "_" + "PODCAST" + "_VERSION_" + CAPTCHA_TYPE
 
 
 def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_ending=".wav"):
@@ -19,19 +40,15 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
     Random(4).shuffle(file_list)
 
     length_portion = int(len(file_list) / 8)
-    if func_lib.VERSION_NUMBER == "2":
-        # file_list = file_list[0:length_portion]
+    if CAPTCHA_TYPE == "2":
         file_list = file_list[length_portion * 4: length_portion * 5]
-    elif func_lib.VERSION_NUMBER == "3a":
+    elif CAPTCHA_TYPE == "3a":
         file_list = file_list[length_portion: length_portion * 2]
-    elif func_lib.VERSION_NUMBER == "3b":
+    elif CAPTCHA_TYPE == "3b":
         file_list = file_list[length_portion * 7: length_portion * 8]
-    #        file_list = file_list[length_portion * 6: length_portion * 7]
-    #        file_list = file_list[length_portion * 2: length_portion * 3]
-    elif func_lib.VERSION_NUMBER == "4":
+    elif CAPTCHA_TYPE == "4":
         file_list = file_list[length_portion * 3: length_portion * 4]
 
-    # Done All. More data if required
     file_list = file_list[:]
 
     gbl_rows = []
@@ -57,7 +74,7 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
                 continue
             extract_just_name = extract_just_name + "_" + time_now
 
-            if func_lib.VERSION_NUMBER == "4":
+            if CAPTCHA_TYPE == "4":
                 word_list_format.user_study_function(file_entry, study_output_folder, extract_just_name, audio_type,
                                                      gbl_rows, selected_rows)
             else:
@@ -76,6 +93,7 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
                 selected_rows = []
 
         except Exception as fileException:
+            print(str(fileException))
             logging.error(str(fileException))
 
 
@@ -90,15 +108,17 @@ if __name__ == '__main__':
     selected_strings_layout = open("logs\\selected_" + now + "_" + OUT_TAG + ".csv", "w", newline='')
     selected_csv_writer = csv.writer(selected_strings_layout)
 
-    logging.basicConfig(filename='process_logs\\info_' + func_lib.VERSION_NUMBER + '.log', format='%(message)s',
+    logging.basicConfig(filename='process_logs\\info_' + CAPTCHA_TYPE + '.log', format='%(message)s',
                         level=logging.INFO)
 
     # Chunk input files. Required because 30 min files don't return.
     try:
         base_output_folder = "user_study_output\\user_study_initial_output\\"
         audio_property_list = [
-            {"type": "podcast_lecture", "output": "podcast_lecture\\", "input": "podcast_lecture\\",
+            {"type": "podcast_lecture2", "output": "podcast_lecture2\\", "input": "podcast_lecture2\\",
              "chunk_required": True},
+            {"type": "podcast_lecture", "output": "podcast_lecture\\", "input": "podcast_lecture\\",
+             "chunk_required": False},
             {"type": "YTlecture", "output": "lecture\\", "input": "lecture\\", "chunk_required": False},
             {"type": "movie", "output": "movie\\", "input": "movie\\", "chunk_required": False},
             {"type": "song", "output": "song\\", "input": "song\\", "chunk_required": False},
@@ -106,7 +126,6 @@ if __name__ == '__main__':
 
         for type_entry in audio_property_list:
 
-            # Focus on YT Lecture
             if type_entry['type'] != "podcast_lecture":
                 continue
 

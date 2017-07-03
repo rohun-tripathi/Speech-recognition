@@ -1,5 +1,7 @@
 import function_library as func_lib
 import json
+from glob import glob
+import logging
 
 
 def test_speakers():
@@ -13,5 +15,19 @@ def test_speakers():
     json.dump(speaker_json, open("archive\\speaker_test.json", "w"))
 
 
+def create_shell_for_crap_data():
+    logging.basicConfig(filename="below_16000_file_names_removed.txt")
+
+    source = "C:\\Users\\IBM_ADMIN\\Box Sync\\AudioCaptcha\\Code\\stt_code\\user_study_output\\user_study_initial_output\\podcast_lecture\\"
+
+    file_list = glob(source + "*.wav")
+
+    for file_name in file_list:
+        audio_file = func_lib.AudioSegment.from_file(file_name, format="wav")
+        if audio_file.frame_rate < 16000:
+            logging.log(logging.CRITICAL, file_name)
+            func_lib.AudioSegment.silent(duration=1, frame_rate=11025).export(file_name, format="wav")
+
+
 if __name__ == '__main__':
-    test_speakers()
+    create_shell_for_crap_data()

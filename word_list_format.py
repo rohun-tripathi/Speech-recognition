@@ -1,4 +1,6 @@
 import os
+
+import audio_v5
 import function_library as func_lib
 
 # Clip Properties ##############################################
@@ -91,7 +93,7 @@ def increase_noise(word_list, audio_clip, output_location, required_out_file_nam
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, func_lib.VERSION_NUMBER, high_level_transcription, noise_to_add,
+        row = [iteration_out_file_name, audio_v5.CAPTCHA_TYPE, high_level_transcription, noise_to_add,
                "; ".join(str(dummy_word) for dummy_word in word_list), audio_type]
 
         found_unique, row = test_stt_ability(audio_clip, word_list, noise, noise_type,

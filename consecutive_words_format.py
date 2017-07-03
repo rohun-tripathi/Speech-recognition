@@ -1,5 +1,6 @@
 import os
 
+import audio_v5
 import function_library as func_lib
 
 IGNORE_START_WORDS = 6
@@ -13,23 +14,23 @@ def get_audio_segment():
 
 def export_audio_patterns(initial_audio, first_word_audio, second_word_audio, final_audio, noisy_audio, noise,
                           required_out_file_name, silence):
-    beep = get_audio_segment().from_file("parameter_input\\beep_2.wav", format="wav")
-    long_silence = get_audio_segment().silent(duration=400)
-
     complete_file_name = os.path.join("user_study_output\\reduced_confidence\\", required_out_file_name + ".wav")
     noisy_audio.export(out_f=complete_file_name, format="wav")
 
-    noisy_audio = get_noisy_beep_audio(beep, final_audio, first_word_audio, initial_audio, long_silence, noise,
-                                       second_word_audio, silence)
-    beep_file_name = os.path.join("user_study_output\\reduced_confidence\\",
-                                  required_out_file_name + "_W_B.wav")
-    noisy_audio.export(beep_file_name, format="wav")
+    # beep = get_audio_segment().from_file("parameter_input\\beep_2.wav", format="wav")
+    # long_silence = get_audio_segment().silent(duration=400)
 
-    noisy_audio = long_silence.overlay(noise, loop=True) + first_word_audio.overlay(noise, loop=True) + \
-                  second_word_audio.overlay(noise, loop=True) + long_silence.overlay(noise, loop=True)
-    beep_file_name = os.path.join("user_study_output\\reduced_confidence\\",
-                                  required_out_file_name + "_O_B.wav")
-    noisy_audio.export(beep_file_name, format="wav")
+    # noisy_audio = get_noisy_beep_audio(beep, final_audio, first_word_audio, initial_audio, long_silence, noise,
+    #                                    second_word_audio, silence)
+    # beep_file_name = os.path.join("user_study_output\\reduced_confidence\\",
+    #                               required_out_file_name + "_W_B.wav")
+    # noisy_audio.export(beep_file_name, format="wav")
+    #
+    # noisy_audio = long_silence.overlay(noise, loop=True) + first_word_audio.overlay(noise, loop=True) + \
+    #               second_word_audio.overlay(noise, loop=True) + long_silence.overlay(noise, loop=True)
+    # beep_file_name = os.path.join("user_study_output\\reduced_confidence\\",
+    #                               required_out_file_name + "_O_B.wav")
+    # noisy_audio.export(beep_file_name, format="wav")
 
 
 def get_noisy_beep_audio(beep, final_audio, first_word_audio, initial_audio, long_silence, noise, second_word_audio,
@@ -152,7 +153,7 @@ def add_noise_experiment(initial_objects, first_object, second_object, final_obj
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, func_lib.VERSION_NUMBER, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
+        row = [iteration_out_file_name, audio_v5.CAPTCHA_TYPE, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
                first_object.confidence, second_object.confidence, audio_type]
 
         found_unique, row = call_for_different_word_length(audio_clip, initial_objects, first_object, second_object,

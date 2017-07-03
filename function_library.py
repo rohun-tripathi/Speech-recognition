@@ -1,42 +1,40 @@
 import re
 import sys
 
-
-from watson_developer_cloud import SpeechToTextV1
-from pydub import AudioSegment
-
-from nltk.corpus import words
 from nltk.corpus import wordnet
+from nltk.corpus import words
+from pydub import AudioSegment
+from watson_developer_cloud import SpeechToTextV1
+
+from audio_v5 import CAPTCHA_TYPE, IBM_PASSWORD, IBM_USERNAME
 
 # (v1) random numbers - max 8 numbers. crop the file.
 # (v2) two words only - both words should be more than 5 chars long
 # (v3) (a) full phrase with last two words with noise; (b) full phrase with full noise
 # (v4) full phrase with full noise
 
-VERSION_NUMBER = "3b"
-
 MINIMUM_NUMBER_OF_CHAR = 4
 USE_ONLY_TWO = False
 USE_LAST_TWO_WORD = False
 NOISE_THROUGH_OUT = False
 
-if VERSION_NUMBER == "2":
+if CAPTCHA_TYPE == "2":
     USE_ONLY_TWO = True
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = True
     MINIMUM_NUMBER_OF_CHAR = 5
 
-elif VERSION_NUMBER == "3a":
+elif CAPTCHA_TYPE == "3a":
     USE_ONLY_TWO = False
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = False
 
-elif VERSION_NUMBER == "3b":
+elif CAPTCHA_TYPE == "3b":
     USE_ONLY_TWO = False
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = True
 
-elif VERSION_NUMBER == "4":
+elif CAPTCHA_TYPE == "4":
     # Flow changes, these do not matter
     pass
 
@@ -60,22 +58,6 @@ LOW_CONF_THRESHOLD = 0.5
 
 #################
 
-# Creds for Alumni Id
-IBM_PASSWORD = '6CF3APtNufSo'
-IBM_USERNAME = 'f098576e-335f-4f3c-95d3-c8276453af52'
-
-# Creds for gmail id - rohun.tripathi.5 - expired
-# IBM_PASSWORD = 'fxjnB8cpGMOJ'
-# IBM_USERNAME = 'e53ab2a7-8a91-41ae-8304-d1cf44c00962'
-
-# Creds for IBM id.
-# IBM_PASSWORD = 'uQnccEAUC2CE'
-# IBM_USERNAME = '8de9146e-c657-48d5-b4e2-cfdf5ad0fc4f'
-
-##################
-
-
-# STT
 speech_to_text = SpeechToTextV1(
     username=IBM_USERNAME,
     password=IBM_PASSWORD,
@@ -147,7 +129,7 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
             file_format = complete_file_name[k + 1:]
             audio = AudioSegment.from_file(complete_file_name, file_format)
 
-            source_regex = r"(?<=" + re.escape(grouped_input) + r").+?(?=" + re.escape(file_format) + r")"
+            source_regex = r"(?<=" + re.escape(grouped_input) + r").+?(?=" + "." + re.escape(file_format) + r")"
             extract_just_name = re.findall(source_regex, complete_file_name)
 
             if len(extract_just_name) != 0:
@@ -176,14 +158,19 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
     return successful_chunk_file_list
 
 
-def get_text_from_speech(file_name, speakers):
+def get_text_from_speech(file_name, extract_speaker):
     with open(file_name, 'rb') as audio_file:
-        return speech_to_text.recognize(audio_file, content_type='audio/wav', timestamps=True, speaker_labels=speakers,
-                                        word_confidence=True, word_alternatives_threshold=0.001, continuous=True)
+        return speech_to_text.recognize(audio_file, content_type='audio/wav', timestamps=True, speaker_labels=extract_speaker,
+                                        word_confidence=True, word_alternatives_threshold=0.01)
 
 
 # noinspection PyBroadException
 def transcribe_robustly(file_name, speakers=False):
+    audio_file = AudioSegment.from_file(file_name, ".wav")
+    if audio_file.frame_rate < 16000:
+        print("Frame Rate below 16000 " + file_name + " frame rate " + str(audio_file.frame_rate))
+        raise Exception("This has to stop.")
+
     try:
         result = get_text_from_speech(file_name, speakers)
     except Exception:
@@ -313,7 +300,7 @@ def is_length_within_limits(word_list):
 
 
 def is_dictionary_word(word_object):
-    global NLTK_DICTIONARY, WORDNET_DICTIONARY, CUSTOM_DICTIONARY
+    global NLTK_DICTIONARY, CUSTOM_DICTIONARY
     if NLTK_DICTIONARY is None:
         NLTK_DICTIONARY = set(words.words())
 
