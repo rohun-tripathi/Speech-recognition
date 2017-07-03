@@ -41,11 +41,11 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
 
     length_portion = int(len(file_list) / 8)
     if CAPTCHA_TYPE == "2":
-        file_list = file_list[length_portion * 4: length_portion * 5]
+        file_list = file_list[:length_portion]
     elif CAPTCHA_TYPE == "3a":
         file_list = file_list[length_portion: length_portion * 2]
     elif CAPTCHA_TYPE == "3b":
-        file_list = file_list[length_portion * 7: length_portion * 8]
+        file_list = file_list[length_portion * 2: length_portion * 3]
     elif CAPTCHA_TYPE == "4":
         file_list = file_list[length_portion * 3: length_portion * 4]
 
