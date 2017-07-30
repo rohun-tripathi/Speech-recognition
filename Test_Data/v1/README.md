@@ -1,0 +1,1 @@
+These Folders contain the data generated before the filtering was added extensively, during the first week of June.
