@@ -1,0 +1,26 @@
+Name,Word Clear,Text Clear,Incorrect GT,Word,Clip length,Clip volume (dBFS),Possible Correct GT,Noise Free Transcription Difficult?
+American_Civil_War_chunk_54_1497156637776667_count_0_noise_28_noise_type_White.wav,1,1,0,states,3.769818594,-18.11497665,,
+American_Civil_War_chunk_77_1497156637776667_count_0_noise_16_noise_type_White.wav,1,0,0,worked,2.099818594,-28.44757257,,
+American_revolution_lecture_chunk_47_1497156637776667_count_0_noise_22_noise_type_White.wav,0,0,0,connected,2.979818594,-15.68044696,,
+American_revolution_lecture_chunk_47_1497156637776667_count_3_noise_15_noise_type_White.wav,1,1,0,such,2.289818594,-24.25805125,,
+Darwins_Legacy_chunk_151_1497156637776667_count_0_noise_27_noise_type_White.wav,1,1,0,graduate,2.399818594,-19.54506713,,
+Darwins_Legacy_chunk_39_1497156637776667_count_0_noise_12_noise_type_White.wav,1,1,0,beagle,2.569818594,-18.9967642,,
+Elon_Musk_chunk_76_1497156637776667_count_0_noise_11_noise_type_White.wav,1,0,0,London,2.959818594,-27.50512513,,
+google_Documentary_chunk_60_1497156637776667_count_0_noise_9_noise_type_White.wav,1,0,0,account,2.419818594,-31.63925294,,
+google_Documentary_chunk_60_1497156637776667_count_1_noise_7_noise_type_White.wav,0,1,0,took,2.559818594,-32.56791114,,
+Google_IO_2017_chunk_32_1497156637776667_count_0_noise_23_noise_type_White.wav,1,1,0,times,2.569818594,-22.39897621,,
+Google_IO_2017_chunk_96_1497156637776667_count_0_noise_18_noise_type_White.wav,1,1,0,show,2.599818594,-24.38886531,,
+Nikola_Tesla_chunk_30_1497156637776667_count_0_noise_21_noise_type_White.wav,0,1,0,first,2.869818594,-25.02681557,,
+Nikola_Tesla_chunk_30_1497156637776667_count_1_noise_7_noise_type_White.wav,1,1,0,hard,2.989818594,-29.70510299,,
+Shakespeare_chunk_38_1497156637776667_count_0_noise_23_noise_type_White.wav,1,1,0,stage,3.169818594,-21.37514937,,
+Shakespeare_chunk_60_1497156637776667_count_0_noise_10_noise_type_White.wav,1,1,0,king,4.469818594,-22.60402505,,
+Western_Philosophy_chunk_30_1497156637776667_count_0_noise_9_noise_type_White.wav,1,1,0,yard,2.809818594,-29.58440782,,
+Yoshua_Bengio_chunk_59_1497156637776667_count_0_noise_4_noise_type_White.wav,1,1,0,talk,3.999818594,-31.57872385,,
+Yoshua_Bengio_chunk_59_1497156637776667_count_1_noise_0_noise_type_White.wav,1,1,0,models,3.419818594,-36.48736886,,
+,,,,,,,,
+Shakespeare_chunk_43_1497156637776667_count_0_noise_22_noise_type_White.wav,0,0,1,quickly,2.939818594,-22.33978171,Mr cripleys,1
+Western_Philosophy_chunk_30_1497156637776667_count_2_noise_0_noise_type_White.wav,0,1,1,jobs,2.739818594,-30.1882396,?,0
+American_revolution_lecture_chunk_95_1497156637776667_count_0_noise_24_noise_type_White.wav,0,0,1,institution,2.379818594,-20.86264777,institutional,1
+Darwins_Legacy_chunk_41_1497156637776667_count_0_noise_26_noise_type_White.wav,0,1,1,forces,2.499818594,-16.50153256,forties,0
+Future_President_chunk_67_1497156637776667_count_1_noise_0_noise_type_White.wav,0,1,1,because,1.749818594,-29.24742983,cause,0
+Nikola_Tesla_chunk_90_1497156637776667_count_1_noise_12_noise_type_White.wav,0,1,1,where,3.499818594,-29.52071632,were,0
