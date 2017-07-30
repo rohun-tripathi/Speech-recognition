@@ -12,13 +12,22 @@ import logging
 # (v3) (a) full phrase with last two words with noise; (b) full phrase with full noise
 # (v4) full phrase with full noise
 
-CAPTCHA_TYPE = "3b"
-
 # Creds for Alumni Id
+CAPTCHA_TYPE = "4"
 IBM_PASSWORD = '6CF3APtNufSo'
 IBM_USERNAME = 'f098576e-335f-4f3c-95d3-c8276453af52'
 
-# Creds for gmail id - rohun.tripathi.5 - expired
+# # Creds for Alumni Id
+# CAPTCHA_TYPE = "4"
+# IBM_PASSWORD = '6CF3APtNufSo'
+# IBM_USERNAME = 'f098576e-335f-4f3c-95d3-c8276453af52'
+
+# # Creds for Alumni Id
+# CAPTCHA_TYPE = "2"
+# IBM_PASSWORD = '6CF3APtNufSo'
+# IBM_USERNAME = 'f098576e-335f-4f3c-95d3-c8276453af52'
+
+# Creds for 2nd expired gmail id -
 # IBM_PASSWORD = 'fxjnB8cpGMOJ'
 # IBM_USERNAME = 'e53ab2a7-8a91-41ae-8304-d1cf44c00962'
 
@@ -39,17 +48,20 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
     file_list = glob.glob(user_study_input_data + "*" + file_ending)
     Random(4).shuffle(file_list)
 
-    length_portion = int(len(file_list) / 8)
+    length_portion = int(len(file_list) / 20)
     if CAPTCHA_TYPE == "2":
-        file_list = file_list[:length_portion]
-    elif CAPTCHA_TYPE == "3a":
-        file_list = file_list[length_portion: length_portion * 2]
+        file_list = file_list[length_portion * 15: length_portion * 17]
     elif CAPTCHA_TYPE == "3b":
-        file_list = file_list[length_portion * 2: length_portion * 3]
+        file_list = file_list[length_portion * 17: length_portion * 19]
     elif CAPTCHA_TYPE == "4":
-        file_list = file_list[length_portion * 3: length_portion * 4]
+        file_list = file_list[length_portion * 19: length_portion * 20]
+    elif CAPTCHA_TYPE == "3a":
+        raise Exception("3a not generated anymore")
+    else:
+        raise Exception("Captcha Type not supported")
 
-    file_list = file_list[:]
+    # If further reduction in set is required.
+    file_list = file_list[365:]
 
     gbl_rows = []
     selected_rows = []
@@ -57,10 +69,10 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
     source_regex = r"(?<=" + re.escape(user_study_input_data) + r").+?(?=.wav)"
 
     # This can be improved
-    study_output_folder = "user_study_output\\"
+    study_output_folder = func_lib.OUTPUT_DATA_DETAILS_STAGE
 
     break_execution = False
-    for file_entry in file_list:
+    for file_index, file_entry in enumerate(file_list):
         try:
             if break_execution:
                 break
@@ -83,17 +95,17 @@ def prepare_for_user_study(user_study_input_data, audio_type, time_now, file_end
 
             logging.info("Done for : " + file_entry + " output : " + str(gbl_rows) + str(selected_rows))
             print("Done for : " + file_entry + " output : " + str(gbl_rows) + str(selected_rows))
+            print(file_index)
 
             if len(gbl_rows) > 0:
                 global_csv_writer.writerows(gbl_rows)
                 gbl_rows = []
-
             if len(selected_rows) > 0:
                 selected_csv_writer.writerows(selected_rows)
                 selected_rows = []
 
         except Exception as fileException:
-            print(str(fileException))
+            print(str(fileException) + "_" + str(file_index))
             logging.error(str(fileException))
 
 
@@ -113,13 +125,12 @@ if __name__ == '__main__':
 
     # Chunk input files. Required because 30 min files don't return.
     try:
-        base_output_folder = "user_study_output\\user_study_initial_output\\"
         audio_property_list = [
             {"type": "podcast_lecture2", "output": "podcast_lecture2\\", "input": "podcast_lecture2\\",
-             "chunk_required": True},
+             "chunk_required": False},
             {"type": "podcast_lecture", "output": "podcast_lecture\\", "input": "podcast_lecture\\",
              "chunk_required": False},
-            {"type": "YTlecture", "output": "lecture\\", "input": "lecture\\", "chunk_required": False},
+            {"type": "YT_lecture", "output": "lecture\\", "input": "lecture\\", "chunk_required": False},
             {"type": "movie", "output": "movie\\", "input": "movie\\", "chunk_required": False},
             {"type": "song", "output": "song\\", "input": "song\\", "chunk_required": False},
             {"type": "radio", "output": "radio\\", "input": "philip_marlowe\\", "chunk_required": False}]
@@ -129,7 +140,7 @@ if __name__ == '__main__':
             if type_entry['type'] != "podcast_lecture":
                 continue
 
-            chunk_location = base_output_folder + type_entry["output"]
+            chunk_location = func_lib.INPUT_CHUNK_STAGE + type_entry["output"]
             os.makedirs(chunk_location, exist_ok=True)
 
             if type_entry["chunk_required"]:
@@ -138,7 +149,7 @@ if __name__ == '__main__':
                     func_lib.AUDIO_CHUNK_SIZE_SECONDS = 10
 
                 original_no_chunk_data = type_entry["input"]
-                file_name_list = glob.glob("data_input\\" + original_no_chunk_data + "*")
+                file_name_list = glob.glob(func_lib.INPUT_DATA_STAGE + original_no_chunk_data + "*")
 
                 func_lib.save_to_chunks(file_name_list, chunk_location, original_no_chunk_data)
 

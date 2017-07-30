@@ -43,6 +43,11 @@ else:
 
 #################
 
+OUTPUT_DATA_DETAILS_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_output_details_stage\\"
+OUTPUT_DATA_SELECTED = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_output_selected\\"
+INPUT_CHUNK_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_chunk_stage\\"
+INPUT_DATA_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_input_stage\\"
+
 AUDIO_LOUDNESS_THRESHOLD = -11.44
 
 NLTK_DICTIONARY = None
@@ -91,7 +96,8 @@ def check_word_confidence(predicted_word_list, original_word_list, audio_start_o
             detected_confidence = 0
 
             detected_confidence = \
-                get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word, predicted_word_list)
+                get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word,
+                                         predicted_word_list)
 
             if detected_confidence < 0.5:
                 return stt_word, True
@@ -122,12 +128,17 @@ class WordObject:
 
 def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
     successful_chunk_file_list = []
+    failed_chunk_file_list = []
 
     for complete_file_name in file_name_list:
         try:
             k = complete_file_name.rfind(".")  # find the last occurrence of dot
             file_format = complete_file_name[k + 1:]
+
             audio = AudioSegment.from_file(complete_file_name, file_format)
+            if audio.frame_rate < 16000:
+                raise Exception("Frame Rate below 16000 " + complete_file_name + " frame rate " + str(
+                    audio.frame_rate) + ". This file has to stop as IBM needs minimum 16000.")
 
             source_regex = r"(?<=" + re.escape(grouped_input) + r").+?(?=" + "." + re.escape(file_format) + r")"
             extract_just_name = re.findall(source_regex, complete_file_name)
@@ -154,13 +165,16 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
 
             successful_chunk_file_list.append(complete_file_name)
         except Exception as e:
+            failed_chunk_file_list.append(complete_file_name)
             print(str(e))
-    return successful_chunk_file_list
+
+    return successful_chunk_file_list, failed_chunk_file_list
 
 
 def get_text_from_speech(file_name, extract_speaker):
     with open(file_name, 'rb') as audio_file:
-        return speech_to_text.recognize(audio_file, content_type='audio/wav', timestamps=True, speaker_labels=extract_speaker,
+        return speech_to_text.recognize(audio_file, content_type='audio/wav', timestamps=True,
+                                        speaker_labels=extract_speaker,
                                         word_confidence=True, word_alternatives_threshold=0.01)
 
 
@@ -168,8 +182,9 @@ def get_text_from_speech(file_name, extract_speaker):
 def transcribe_robustly(file_name, speakers=False):
     audio_file = AudioSegment.from_file(file_name, ".wav")
     if audio_file.frame_rate < 16000:
-        print("Frame Rate below 16000 " + file_name + " frame rate " + str(audio_file.frame_rate))
-        raise Exception("This has to stop.")
+        error_message = "Frame Rate below 16000 . This file has to be stopped."
+        print(error_message + " " + file_name + " frame rate " + str(audio_file.frame_rate))
+        raise Exception(error_message)
 
     try:
         result = get_text_from_speech(file_name, speakers)
@@ -234,6 +249,7 @@ def get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, 
                 if lies_between_start_end(alternative.start_time, alternative.end_time, stt_start_time, stt_end_time):
                     return alternative.confidence
     return detected_confidence
+
 
 # Speaker #################################################
 

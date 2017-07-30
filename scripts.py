@@ -5,6 +5,7 @@ import logging
 
 
 def test_speakers():
+    # Change location
     file_name = "user_study_output\\user_study_initial_output\\lecture\\Elon_Musk_chunk_19.wav"
 
     result = func_lib.transcribe_robustly(file_name, True)
@@ -16,9 +17,9 @@ def test_speakers():
 
 
 def create_shell_for_crap_data():
-    logging.basicConfig(filename="below_16000_file_names_removed.txt")
+    logging.basicConfig(filename="C:\\Users\\IBM_ADMIN\\speech_recognition\\below_16000_frame_rate_file_removed_2.txt")
 
-    source = "C:\\Users\\IBM_ADMIN\\Box Sync\\AudioCaptcha\\Code\\stt_code\\user_study_output\\user_study_initial_output\\podcast_lecture\\"
+    source = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_chunk_stage\\podcast_lecture\\"
 
     file_list = glob(source + "*.wav")
 

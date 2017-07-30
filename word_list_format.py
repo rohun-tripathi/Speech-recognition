@@ -42,7 +42,7 @@ def test_stt_ability(audio, original_word_list, noise,
         func_lib.check_word_confidence(predicted_word_list, original_word_list, audio_start_offset)
     if is_lowered_sufficiently:
         row.append(reduced_word)
-        complete_file_name = os.path.join("user_study_output\\reduced_confidence\\", required_out_file_name + ".wav")
+        complete_file_name = os.path.join(func_lib.OUTPUT_DATA_SELECTED, required_out_file_name + ".wav")
         noisy_audio.export(out_f=complete_file_name, format="wav")
 
     else:
