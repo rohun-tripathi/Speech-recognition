@@ -1,12 +1,13 @@
 import re
-import sys
+import sys, os
 
 from nltk.corpus import wordnet
 from nltk.corpus import words
 from pydub import AudioSegment
 from watson_developer_cloud import SpeechToTextV1
 
-from audio_v5 import CAPTCHA_TYPE, IBM_PASSWORD, IBM_USERNAME
+from main import CAPTCHA_TYPE
+import global_constants
 
 # (v1) random numbers - max 8 numbers. crop the file.
 # (v2) two words only - both words should be more than 5 chars long
@@ -43,11 +44,6 @@ else:
 
 #################
 
-OUTPUT_DATA_DETAILS_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_output_details_stage\\"
-OUTPUT_DATA_SELECTED = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_output_selected\\"
-INPUT_CHUNK_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_chunk_stage\\"
-INPUT_DATA_STAGE = "C:\\Users\\IBM_ADMIN\\speech_recognition\\data_input_stage\\"
-
 AUDIO_LOUDNESS_THRESHOLD = -11.44
 
 NLTK_DICTIONARY = None
@@ -64,15 +60,15 @@ LOW_CONF_THRESHOLD = 0.5
 #################
 
 speech_to_text = SpeechToTextV1(
-    username=IBM_USERNAME,
-    password=IBM_PASSWORD,
+    username=global_constants.IBM_USERNAME,
+    password=global_constants.IBM_PASSWORD,
     x_watson_learning_opt_out=False
 )
 
 
 def get_noise():
     if NOISE_TYPE == "White":
-        noise = AudioSegment.from_file("parameter_input\\noise.wav", format="wav")
+        noise = AudioSegment.from_file(os.path.join("parameter_input", "noise.wav"), format="wav")
     elif NOISE_TYPE == "school_corridor":
         noise = AudioSegment.from_file("parameter_input\\Chatter_In_School_Corridor_20.wav", format="wav")
     elif NOISE_TYPE == "child":
@@ -164,6 +160,7 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
                              format='wav')
 
             successful_chunk_file_list.append(complete_file_name)
+            print("Done For : " + complete_file_name)
         except Exception as e:
             failed_chunk_file_list.append(complete_file_name)
             print(str(e))

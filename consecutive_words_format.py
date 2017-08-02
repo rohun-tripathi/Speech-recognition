@@ -1,6 +1,7 @@
 import os
 
-import audio_v5
+import global_constants
+import main
 import function_library as func_lib
 
 IGNORE_START_WORDS = 6
@@ -14,7 +15,7 @@ def get_audio_segment():
 
 def export_audio_patterns(initial_audio, first_word_audio, second_word_audio, final_audio, noisy_audio, noise,
                           required_out_file_name, silence):
-    complete_file_name = os.path.join(func_lib.OUTPUT_DATA_SELECTED, required_out_file_name + ".wav")
+    complete_file_name = os.path.join(global_constants.OUTPUT_DATA_SELECTED, required_out_file_name + ".wav")
     noisy_audio.export(out_f=complete_file_name, format="wav")
 
     # beep = get_audio_segment().from_file("parameter_input\\beep_2.wav", format="wav")
@@ -151,7 +152,7 @@ def add_noise_experiment(initial_objects, first_object, second_object, final_obj
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, audio_v5.CAPTCHA_TYPE, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
+        row = [iteration_out_file_name, main.CAPTCHA_TYPE, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
                first_object.confidence, second_object.confidence, audio_type]
 
         found_unique, row = call_for_different_word_length(audio_clip, initial_objects, first_object, second_object,

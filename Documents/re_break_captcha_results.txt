@@ -1,0 +1,65 @@
+C:\ProgramData\Anaconda3\python.exe "C:/Users/IBM_ADMIN/Box Sync/AudioCaptcha/Code/stt_code/rebreakcaptcha/rebreakcaptcha.py"
+[1] Clicking on audio challenge
+[1] Google Speech Recognition: 7
+[1] Need to solve more. Let's do this!
+[1] Google Speech Recognition could not understand audio
+[1] Need to solve more. Let's do this!
+[1] Google Speech Recognition could not understand audio
+[1] Need to solve more. Let's do this!
+[1] Google Speech Recognition could not understand audio
+[1] Need to solve more. Let's do this!
+[1] Google Speech Recognition could not understand audio
+[1] Need to solve more. Let's do this!
+[1] Google Speech Recognition could not understand audio
+[1] Need to solve more. Let's do this!
+Successful breaks: 0
+[2] No element of audio challenge!!
+[2] No element in audio challenge download link!!
+Successful breaks: 0
+[3] Clicking on audio challenge
+[3] Google Speech Recognition: Ace
+[3] Fallback to Houndify!
+[3] Houndify: 3695
+Successful breaks: 1
+[4] Clicking on audio challenge
+[4] Google Speech Recognition: three one 7
+[4] Fallback to Houndify!
+[4] Houndify: 43417
+[4] Need to solve more. Let's do this!
+[4] Google Speech Recognition: XPO one six
+[4] Fallback to Houndify!
+[4] Houndify: 80168
+Successful breaks: 2
+[5] Clicking on audio challenge
+[5] Google Speech Recognition: zero
+[5] Fallback to Houndify!
+[5] Houndify: 85780
+Successful breaks: 2
+Successful breaks: 2
+[7] Clicking on audio challenge
+[7] Google Speech Recognition: free
+[7] Fallback to Houndify!
+[7] Houndify: 99358
+Successful breaks: 3
+[8] Clicking on audio challenge
+[8] Google Speech Recognition: hero 8
+[8] Fallback to Houndify!
+[8] Houndify: 8884
+Successful breaks: 4
+[9] Clicking on audio challenge
+[9] Google Speech Recognition: weather AO3
+[9] Fallback to Houndify!
+[9] Houndify: 472232
+[9] Need to solve more. Let's do this!
+[9] Google Speech Recognition: 9 one
+[9] Fallback to Houndify!
+[9] Houndify: 3916
+Successful breaks: 5
+[10] Clicking on audio challenge
+[10] Google Speech Recognition: zero
+[10] Fallback to Houndify!
+[10] Houndify: 2401
+Successful breaks: 6
+Total successful breaks: 6\10
+
+Process finished with exit code 0

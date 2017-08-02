@@ -1,6 +1,7 @@
 import os
 
-import audio_v5
+import global_constants
+import main
 import function_library as func_lib
 
 # Clip Properties ##############################################
@@ -42,7 +43,7 @@ def test_stt_ability(audio, original_word_list, noise,
         func_lib.check_word_confidence(predicted_word_list, original_word_list, audio_start_offset)
     if is_lowered_sufficiently:
         row.append(reduced_word)
-        complete_file_name = os.path.join(func_lib.OUTPUT_DATA_SELECTED, required_out_file_name + ".wav")
+        complete_file_name = os.path.join(global_constants.OUTPUT_DATA_SELECTED, required_out_file_name + ".wav")
         noisy_audio.export(out_f=complete_file_name, format="wav")
 
     else:
@@ -93,7 +94,7 @@ def increase_noise(word_list, audio_clip, output_location, required_out_file_nam
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, audio_v5.CAPTCHA_TYPE, high_level_transcription, noise_to_add,
+        row = [iteration_out_file_name, main.CAPTCHA_TYPE, high_level_transcription, noise_to_add,
                "; ".join(str(dummy_word) for dummy_word in word_list), audio_type]
 
         found_unique, row = test_stt_ability(audio_clip, word_list, noise, noise_type,
