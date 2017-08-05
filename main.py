@@ -109,15 +109,12 @@ if __name__ == '__main__':
         audio_property_list = [
             {"type": "podcast_lecture", "output": "podcast_lecture/", "input": "podcast_lecture/",
              "chunk_required": False},
-            {"type": "YT_lecture", "output": "lecture/", "input": "lecture/", "chunk_required": False},
+            {"type": "YT_lecture", "output": "lecture/", "input": "lecture/", "chunk_required": True},
             {"type": "movie", "output": "movie/", "input": "movie/", "chunk_required": False},
             {"type": "song", "output": "song/", "input": "song/", "chunk_required": False},
             {"type": "radio", "output": "radio/", "input": "philip_marlowe/", "chunk_required": False}]
 
         for type_entry in audio_property_list:
-
-            if type_entry['type'] != "podcast_lecture":
-                continue
 
             chunk_location = os.path.join(global_constants.INPUT_CHUNK_STAGE, type_entry["output"])
             try:
@@ -135,7 +132,10 @@ if __name__ == '__main__':
 
                 func_lib.save_to_chunks(file_name_list, chunk_location, original_no_chunk_data)
 
-                # prepare_for_user_study(chunk_location, type_entry["type"], main_process_start_time, file_ending=".wav")
+            if type_entry['type'] != "podcast_lecture":
+                continue
+
+            # prepare_for_user_study(chunk_location, type_entry["type"], main_process_start_time, file_ending=".wav")
 
     except Exception as e:
         logging.error(str(e))

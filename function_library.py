@@ -177,7 +177,7 @@ def get_text_from_speech(file_name, extract_speaker):
 
 # noinspection PyBroadException
 def transcribe_robustly(file_name, speakers=False):
-    audio_file = AudioSegment.from_file(file_name, ".wav")
+    audio_file = AudioSegment.from_file(file_name, "wav")
     if audio_file.frame_rate < 16000:
         error_message = "Frame Rate below 16000 . This file has to be stopped."
         print(error_message + " " + file_name + " frame rate " + str(audio_file.frame_rate))
