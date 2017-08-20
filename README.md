@@ -1,14 +1,15 @@
-audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It runs on 3.4-3.6 and will work with minimal tweaks for python 2.7. It requires uses pydub, http://pydub.com, for audio file manipulation and watson-developer-cloud for Speech to Text conversion.
+audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It has been tested for python 3.4-3.6 and will work with minimal tweaks for python 2.7.
+It requires uses pydub, http://pydub.com, for audio file manipulation and watson-developer-cloud for Speech to Text conversion.
 
 Author -
     Rohun Tripathi
     rohun.tripathi.5@gmail.com
-    The URL of the project hosting page (GitHub, etc.)
-    The URL of the paper draft
+    Add - The URL of the project hosting page (GitHub, etc.)
+    Add - The URL of the paper draft
 
 Requirements:
 
-Tested in python 3.3-3.6. Should work with minimal tweaks for for 2.7
+Tested in python 3.3-3.6. Should work with minimal tweaks for python 2.7
 
 Requirements:
     pydub - pip install pydub
@@ -35,12 +36,12 @@ Requirements:
 
 
 Usage:
-    The entry module to the python code is main.py
+    The entry module to the code base is main.py
 
-    A command line example -
+    A command line usage via example.py -
         python example.py --group "example" --data "/Users/rohuntripathi/speech-recognition-test/audio_data" --input "input_stage" --chunk "chunk_folder" --selected "selected" --audioclippeddata "more_audio"
 
-    Values we are providing:
+    Values provided:
           -g GROUP, --group GROUP
                                 data in example sub folder path/name/tag
           -d DATA, --data DATA  data folder path
@@ -52,3 +53,6 @@ Usage:
                                 proposed clips for CAPTCHA selection
           -s SELECTED, --selected SELECTED
                                 final selected CAPTCHA output, on which the STT fails, from the proposed values
+
+    global_constants.py is the configuration file.
+        Can set the CAPTCHA to be generated in global_constants.py
