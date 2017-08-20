@@ -1,13 +1,14 @@
+import glob
+import os
 import re
-import sys, os
+import sys
 
 from nltk.corpus import wordnet
 from nltk.corpus import words
 from pydub import AudioSegment
 from watson_developer_cloud import SpeechToTextV1
 
-from main import CAPTCHA_TYPE
-import global_constants
+from global_constants import *
 
 # (v1) random numbers - max 8 numbers. crop the file.
 # (v2) two words only - both words should be more than 5 chars long
@@ -15,23 +16,24 @@ import global_constants
 # (v4) full phrase with full noise
 
 MINIMUM_NUMBER_OF_CHAR = 4
-USE_ONLY_TWO = False
+
+USE_ONLY_TWO_WORDS = False
 USE_LAST_TWO_WORD = False
-NOISE_THROUGH_OUT = False
+NOISE_THROUGH_OUT = True
 
 if CAPTCHA_TYPE == "2":
-    USE_ONLY_TWO = True
+    USE_ONLY_TWO_WORDS = True
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = True
     MINIMUM_NUMBER_OF_CHAR = 5
 
 elif CAPTCHA_TYPE == "3a":
-    USE_ONLY_TWO = False
+    USE_ONLY_TWO_WORDS = False
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = False
 
 elif CAPTCHA_TYPE == "3b":
-    USE_ONLY_TWO = False
+    USE_ONLY_TWO_WORDS = False
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = True
 
@@ -44,24 +46,14 @@ else:
 
 #################
 
-AUDIO_LOUDNESS_THRESHOLD = -11.44
-
 NLTK_DICTIONARY = None
 CUSTOM_DICTIONARY = None
-
-NOISE_TYPE = "White"
-
-AUDIO_CHUNK_SIZE_SECONDS = 25
-MIN_AUDIO_CHUNK_SIZE_SECONDS = 5
-
-HIGH_CONF_THRESHOLD = 0.70
-LOW_CONF_THRESHOLD = 0.5
 
 #################
 
 speech_to_text = SpeechToTextV1(
-    username=global_constants.IBM_USERNAME,
-    password=global_constants.IBM_PASSWORD,
+    username=IBM_USERNAME,
+    password=IBM_PASSWORD,
     x_watson_learning_opt_out=False
 )
 
@@ -122,7 +114,18 @@ class WordObject:
                     "word": self.word, "length": self.length})
 
 
-def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
+def save_to_chunks(input_data_folder, chunk_output_folder, input_group):
+    """Chunk input files. Required because 30 min files don't return."""
+
+    if input_group == "song":
+        AUDIO_CHUNK_SIZE_SECONDS = 10
+    else:
+        AUDIO_CHUNK_SIZE_SECONDS = 25
+
+    file_name_list = glob.glob(os.path.join(input_data_folder, input_group) + os.path.sep + "*")
+
+    os.makedirs(chunk_output_folder, exist_ok=True)
+
     successful_chunk_file_list = []
     failed_chunk_file_list = []
 
@@ -136,7 +139,7 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
                 raise Exception("Frame Rate below 16000 " + complete_file_name + " frame rate " + str(
                     audio.frame_rate) + ". This file has to stop as IBM needs minimum 16000.")
 
-            source_regex = r"(?<=" + re.escape(grouped_input) + r").+?(?=" + "." + re.escape(file_format) + r")"
+            source_regex = r"(?<=" + re.escape(input_group) + r").+?(?=" + "." + re.escape(file_format) + r")"
             extract_just_name = re.findall(source_regex, complete_file_name)
 
             if len(extract_just_name) != 0:
@@ -151,12 +154,12 @@ def save_to_chunks(file_name_list, chunk_input_folder, grouped_input):
                 chunk = audio[:AUDIO_CHUNK_SIZE_SECONDS * 1000]
                 audio = audio[AUDIO_CHUNK_SIZE_SECONDS * 1000:]
 
-                chunk.export(chunk_input_folder + extract_just_name + "_chunk_" + str(chunk_number) + '.wav',
+                chunk.export(chunk_output_folder + extract_just_name + "_chunk_" + str(chunk_number) + '.wav',
                              format='wav')
                 chunk_number += 1
 
             if audio.duration_seconds >= MIN_AUDIO_CHUNK_SIZE_SECONDS:
-                audio.export(chunk_input_folder + extract_just_name + "_final_chunk_" + str(chunk_number) + '.wav',
+                audio.export(chunk_output_folder + extract_just_name + "_final_chunk_" + str(chunk_number) + '.wav',
                              format='wav')
 
             successful_chunk_file_list.append(complete_file_name)

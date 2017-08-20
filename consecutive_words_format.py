@@ -120,13 +120,13 @@ def add_noise_experiment(initial_objects, first_object, second_object, final_obj
     noise_type, input_noise = func_lib.get_noise()
 
     # The threshold value we are working with is 0.8 * original power. Now 10 * log(0.8) ~ -1
-    original_dBFS = audio_clip.dBFS - 1
+    maximum_allowed_dBFS = audio_clip.dBFS - 1
 
     step_size = 10
     noise_to_add = -1
     best_solution = None
 
-    if input_noise.dBFS > original_dBFS:
+    if input_noise.dBFS > maximum_allowed_dBFS:
         return
 
     while step_size >= 1:
@@ -138,7 +138,7 @@ def add_noise_experiment(initial_objects, first_object, second_object, final_obj
         else:
             noise = input_noise + noise_to_add
 
-            if noise.dBFS > original_dBFS:
+            if noise.dBFS > maximum_allowed_dBFS:
                 reduced_step_size = int(step_size / 2)
                 noise_to_add = noise_to_add - step_size + reduced_step_size
                 step_size = reduced_step_size
@@ -152,7 +152,7 @@ def add_noise_experiment(initial_objects, first_object, second_object, final_obj
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, main.CAPTCHA_TYPE, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
+        row = [iteration_out_file_name, global_constants.CAPTCHA_TYPE, start_time, end_time, high_level_transcription, noise_to_add, first_easy,
                first_object.confidence, second_object.confidence, audio_type]
 
         found_unique, row = call_for_different_word_length(audio_clip, initial_objects, first_object, second_object,
@@ -202,10 +202,10 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
 
     while word_index < len(res_end_time) - 1:
         # Check if the two consecutive words have high and low confidence and vice versa
-        if (res_confidence[word_index] > func_lib.HIGH_CONF_THRESHOLD and res_confidence[
-                word_index - 1] < func_lib.LOW_CONF_THRESHOLD) or \
-                (res_confidence[word_index - 1] > func_lib.HIGH_CONF_THRESHOLD and res_confidence[
-                    word_index] < func_lib.LOW_CONF_THRESHOLD):
+        if (res_confidence[word_index] > global_constants.HIGH_CONF_THRESHOLD and res_confidence[
+                word_index - 1] < global_constants.LOW_CONF_THRESHOLD) or \
+                (res_confidence[word_index - 1] > global_constants.HIGH_CONF_THRESHOLD and res_confidence[
+                    word_index] < global_constants.LOW_CONF_THRESHOLD):
 
             if len(res_word[word_index]) < func_lib.MINIMUM_NUMBER_OF_CHAR or \
                             len(res_word[word_index - 1]) < func_lib.MINIMUM_NUMBER_OF_CHAR:
@@ -243,7 +243,7 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
             # Initial value at set at clip end
             transcription_end_index = -1
 
-            if func_lib.USE_ONLY_TWO:
+            if func_lib.USE_ONLY_TWO_WORDS:
                 audio_start_time = res_start_time[word_index - 1]
                 transcription_start_index = word_index - 1
             else:
@@ -253,7 +253,7 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
                 audio_start_time = 0
                 transcription_start_index = 0
 
-            if func_lib.USE_LAST_TWO_WORD or func_lib.USE_ONLY_TWO:
+            if func_lib.USE_LAST_TWO_WORD or func_lib.USE_ONLY_TWO_WORDS:
                 audio_end_time = res_end_time[word_index]
                 transcription_end_index = word_index
             else:
@@ -287,7 +287,7 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
                 continue
 
             if (not func_lib.USE_LAST_TWO_WORD and len(initial_objects) == 0) or (
-                        not (func_lib.USE_LAST_TWO_WORD or func_lib.USE_ONLY_TWO) and len(final_word_objects) == 0):
+                        not (func_lib.USE_LAST_TWO_WORD or func_lib.USE_ONLY_TWO_WORDS) and len(final_word_objects) == 0):
                 print("Skipped words because either initial or final words are empty: " + str(initial_objects)
                       + str(final_word_objects))
                 word_index += 1

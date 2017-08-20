@@ -94,7 +94,7 @@ def increase_noise(word_list, audio_clip, output_location, required_out_file_nam
                 continue
 
         iteration_out_file_name = required_out_file_name + "_noise_" + str(noise_to_add) + "_noise_type_" + noise_type
-        row = [iteration_out_file_name, main.CAPTCHA_TYPE, high_level_transcription, noise_to_add,
+        row = [iteration_out_file_name, global_constants.CAPTCHA_TYPE, high_level_transcription, noise_to_add,
                "; ".join(str(dummy_word) for dummy_word in word_list), audio_type]
 
         found_unique, row = test_stt_ability(audio_clip, word_list, noise, noise_type,
@@ -175,10 +175,10 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
 
         for word in cropped_list:
             if word.length >= func_lib.MINIMUM_NUMBER_OF_CHAR:
-                if word.confidence > func_lib.HIGH_CONF_THRESHOLD:
+                if word.confidence > global_constants.HIGH_CONF_THRESHOLD:
                     high_confidence_words_exist = True
 
-                if word.confidence < func_lib.LOW_CONF_THRESHOLD:
+                if word.confidence < global_constants.LOW_CONF_THRESHOLD:
                     low_confidence_words_exist = True
 
         if not (high_confidence_words_exist and low_confidence_words_exist):
