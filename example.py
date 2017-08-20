@@ -8,6 +8,8 @@ import function_library
 
 import traceback
 
+import logging
+
 arg_object = argparse.ArgumentParser()
 
 arg_object.add_argument("-g", "--group", help="data in example sub folder path/name/tag")
@@ -48,13 +50,15 @@ print(constant.OUTPUT_DATA_DETAILS_STAGE)
 try:
     main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
     output_file_tag = "UNIT_TEST_" + constant.CAPTCHA_TYPE
-
     chunk_location = join(constant.INPUT_CHUNK_STAGE, folder_group)
+
+    logging.info("Begin Generating Chunk of input Audio")
     function_library.save_to_chunks(constant.INPUT_DATA_STAGE, chunk_location, folder_group)
 
+    logging.info("Begin Generating Audio reCAPTCHA")
     main.prepare_for_user_study(chunk_location, folder_group, main_process_start_time, output_file_tag,
                                 constant.OUTPUT_DATA_DETAILS_STAGE)
-    print("Exiting")
+    logging.info("Exiting")
 
 except OSError as osE:
     print("Possibly an error related to folder creation. Please check the sub folder directory creation. " + str(osE))

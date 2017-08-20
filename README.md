@@ -1,11 +1,14 @@
 audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It has been tested for python 3.4-3.6 and will work with minimal tweaks for python 2.7.
-It requires uses pydub, http://pydub.com, for audio file manipulation and watson-developer-cloud for Speech to Text conversion.
 
-Author -
-    Rohun Tripathi
-    rohun.tripathi.5@gmail.com
-    Add - The URL of the project hosting page (GitHub, etc.)
-    Add - The URL of the paper draft
+audioCAPTCHA is shared for researchers interested in developing audio CAPTCHA clips for research purposes.
+Shared under the MIT License.
+
+It requires uses pydub, http://pydub.com, for audio file manipulation, watson-developer-cloud for Speech to Text conversion and nltk corpus for word validations.
+
+Author (Might be removed for the review purpose) -
+    Rohun Tripathi - rohun.tripathi.5@gmail.com
+    Project repo - https://github.com/rohun-tripati/speech-recognition
+    URL of the draft - are we sharing on arxiv?
 
 Requirements:
 
@@ -22,7 +25,7 @@ Requirements:
         Copy Credentials to IBM_password and IBM_username "global_constants.py"
 
     ffmpeg -
-       From https://github.com/jiaaro/pydub - "You can open and save WAV files with pure python. For opening and saving non-wav files – like mp3 – you'll need ffmpeg or libav."
+        From https://github.com/jiaaro/pydub - "You can open and save WAV files with pure python. For opening and saving non-wav files – like mp3 – you'll need ffmpeg or libav."
         Instructions on the site.
 
         For Ubuntu 14.04 -
@@ -34,8 +37,16 @@ Requirements:
         For Mac -
             brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
 
+    nltk corpora -
+        The project uses nltk corpora to check for valid words from the english dictionary.
+        Installation technique -
+            Start a python console
+            [1] : import nltk
+            [2] : nltk.download()
+            And NLTK Corpora download screen pops us. Download all the options avaliable.
 
-Usage:
+
+Out of the box - Usage:
     The entry module to the code base is main.py
 
     A command line usage via example.py -

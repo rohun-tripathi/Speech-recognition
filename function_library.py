@@ -163,7 +163,7 @@ def save_to_chunks(input_data_folder, chunk_output_folder, input_group):
                              format='wav')
 
             successful_chunk_file_list.append(complete_file_name)
-            print("Done For : " + complete_file_name)
+            print("Generated Chunks for : " + complete_file_name)
         except Exception as e:
             failed_chunk_file_list.append(complete_file_name)
             print(str(e))
@@ -182,7 +182,7 @@ def get_text_from_speech(file_name, extract_speaker):
 def transcribe_robustly(file_name, speakers=False):
     audio_file = AudioSegment.from_file(file_name, "wav")
     if audio_file.frame_rate < 16000:
-        error_message = "Frame Rate below 16000 . This file has to be stopped."
+        error_message = "Frame Rate below 16000. This file has to be abandoned."
         print(error_message + " " + file_name + " frame rate " + str(audio_file.frame_rate))
         raise Exception(error_message)
 
@@ -291,6 +291,9 @@ def get_speaker_list(result):
     return speaker_list
 
 
+# Word Length #################################################
+
+
 def is_length_within_limits(word_list):
     """Checks the clip and word length. For just two words, 1 sec was too less and valid cases were missed."""
 
@@ -324,7 +327,7 @@ def is_dictionary_word(word_object):
         return True
 
     if CUSTOM_DICTIONARY is None:
-        with open("parameter_input\\english_words.txt") as word_file:
+        with open(os.path.join("parameter_input", "english_words.txt")) as word_file:
             CUSTOM_DICTIONARY = set(word.strip().lower() for word in word_file)
 
     if CUSTOM_DICTIONARY.__contains__(word_object.word):
@@ -351,7 +354,7 @@ def is_word_set_eligible(word_list):
     return True
 
 
-def check_and_reduce_volume_too_loud(file_entry):
+def check_and_clip_loud_volume(file_entry):
     audio = AudioSegment.from_file(file_entry, format="wav")
 
     if audio.dBFS > AUDIO_LOUDNESS_THRESHOLD:

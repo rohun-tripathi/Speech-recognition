@@ -16,9 +16,6 @@ import word_list_format
 logs_folder = 'logs'
 os.makedirs(logs_folder, exist_ok=True)
 
-selected_csv_writer = None
-global_csv_writer = None
-
 # Attempt to make the basic config instantiation global.
 process_logs_folder = 'process_logs'
 os.makedirs(process_logs_folder, exist_ok=True)
@@ -28,7 +25,7 @@ logging.basicConfig(filename=os.path.join(process_logs_folder, 'info_' + global_
 
 
 def prepare_for_user_study(study_input_folder, audio_type, process_time, output_file_tag, study_output_folder,
-                           file_ending=".wav"):
+                           file_ending=".wav", global_csv_writer=None, selected_csv_writer=None):
     """Read the files
     Allocate to different Captcha Types
     Execute CAPTCHA generation for each file
@@ -56,14 +53,11 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
     gbl_rows = []
     selected_rows = []
 
-    source_regex = r"(?<=" + re.escape(study_input_folder) + r").+?(?=.wav)"
-
-    # This can be improved
-    study_output_folder = global_constants.OUTPUT_DATA_DETAILS_STAGE
+    source_regex = r"(?<=" + re.escape(study_input_folder + os.path.sep) + r").+?(?=.wav)"
 
     for file_index, file_entry in enumerate(file_list):
         try:
-            func_lib.check_and_reduce_volume_too_loud(file_entry)
+            func_lib.check_and_clip_loud_volume(file_entry)
 
             extract_just_name = re.findall(source_regex, file_entry)
             if len(extract_just_name) != 0:
@@ -85,8 +79,8 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
 
                 # Lazy load because the system other wise creates loads of empty excel files for test procedures.
                 if global_csv_writer is None:
-                    file_layout = open("logs\\detail_" + process_time + "_" + output_file_tag + ".csv", "w",
-                                       newline='')
+                    file_layout = open(os.path.join("logs", "detail_" + process_time + "_" +
+                                                    output_file_tag + ".csv"), "w", newline='')
                     global_csv_writer = csv.writer(file_layout)
 
                 global_csv_writer.writerows(gbl_rows)
@@ -95,8 +89,8 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
 
                 # Lazy load because the system other wise creates loads of empty excel files for test procedures.
                 if selected_csv_writer is None:
-                    selected_strings_layout = open("logs\\selected_" + process_time + "_" + output_file_tag + ".csv",
-                                                   "w", newline='')
+                    selected_strings_layout = open(os.path.join("logs", "selected_" + process_time + "_" +
+                                                                output_file_tag + ".csv"), "w", newline='')
                     selected_csv_writer = csv.writer(selected_strings_layout)
                 selected_csv_writer.writerows(selected_rows)
                 selected_rows = []
