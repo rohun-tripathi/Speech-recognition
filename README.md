@@ -1,3 +1,5 @@
+audioCAPTCHA
+
 audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It has been tested for python 3.4-3.6 and will work with minimal tweaks for python 2.7.
 
 audioCAPTCHA is shared for researchers interested in developing audio CAPTCHA clips for research purposes.
@@ -11,10 +13,7 @@ Author (Might be removed for the review purpose) -
     URL of the draft - are we sharing on arxiv?
 
 Requirements:
-
-Tested in python 3.3-3.6. Should work with minimal tweaks for python 2.7
-
-Requirements:
+    python 3.3-3.6. Should work with minimal tweaks for python 2.7
     pydub - pip install pydub
     watson-developer-cloud - pip install watson-developer-cloud
 
@@ -47,7 +46,7 @@ Requirements:
 
 
 Out of the box - Usage:
-    The entry module to the code base is main.py
+    The entry module to the code base is main.py and example.py.
 
     A command line usage via example.py -
         python example.py --group "example" --data "/Users/rohuntripathi/speech-recognition-test/audio_data" --input "input_stage" --chunk "chunk_folder" --selected "selected" --audioclippeddata "more_audio"

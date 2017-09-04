@@ -2,7 +2,7 @@ CAPTCHA_TYPE = "3b"
 
 PROJECT_FOLDER = "/Users/rohuntripathi/speech-recognition/"
 
-DATA_FOLDER = PROJECT_FOLDER + "audio_data/"
+DATA_FOLDER = "audio_data/"
 
 OUTPUT_DATA_DETAILS_STAGE = DATA_FOLDER + "data_output_details_stage/"
 OUTPUT_DATA_SELECTED = DATA_FOLDER + "data_output_selected/"
