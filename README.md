@@ -1,18 +1,16 @@
-audioCAPTCHA
+### AudioCAPTCHA
 
 audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It has been tested for python 3.4-3.6 and will work with minimal tweaks for python 2.7.
 
 audioCAPTCHA is shared for researchers interested in developing audio CAPTCHA clips for research purposes.
 Shared under the MIT License.
 
+### Installation
+
 It requires uses pydub, http://pydub.com, for audio file manipulation, watson-developer-cloud for Speech to Text conversion and nltk corpus for word validations.
 
-Author (Might be removed for the review purpose) -
-    Rohun Tripathi - rohun.tripathi.5@gmail.com
-    Project repo - https://github.com/rohun-tripati/speech-recognition
-    URL of the draft - are we sharing on arxiv?
+### Requirements:
 
-Requirements:
     python 3.3-3.6. Should work with minimal tweaks for python 2.7
     pydub - pip install pydub
     watson-developer-cloud - pip install watson-developer-cloud
@@ -45,7 +43,8 @@ Requirements:
             And NLTK Corpora download screen pops us. Download all the options avaliable.
 
 
-Out of the box - Usage:
+### Out of the box - Usage:
+
     The entry module to the code base is main.py and example.py.
 
     A command line usage via example.py -
@@ -66,3 +65,10 @@ Out of the box - Usage:
 
     global_constants.py is the configuration file.
         Can set the CAPTCHA to be generated in global_constants.py
+
+### The MIT License
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
