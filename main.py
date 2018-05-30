@@ -53,7 +53,7 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
     gbl_rows = []
     selected_rows = []
 
-    source_regex = r"(?<=" + re.escape(study_input_folder + os.path.sep) + r").+?(?=.wav)"
+    source_regex = r"(?<=" + re.escape(study_input_folder) + r").+?(?=.wav)"
 
     for file_index, file_entry in enumerate(file_list):
         try:
@@ -106,27 +106,33 @@ def main():
     """
     try:
         audio_property_list = [
+            {"type": "indian_lecture", "output": "indian_lecture/", "input": "indian_lecture/",
+             "chunk_required": False},
             {"type": "podcast_lecture", "output": "podcast_lecture/", "input": "podcast_lecture/",
-             "chunk_required": True},
-            {"type": "YT_lecture", "output": "lecture/", "input": "lecture/", "chunk_required": True},
+             "chunk_required": False},
+            {"type": "YT_lecture", "output": "lecture/", "input": "lecture/", "chunk_required": False},
             {"type": "movie", "output": "movie/", "input": "movie/", "chunk_required": False},
             {"type": "song", "output": "song/", "input": "song/", "chunk_required": False},
             {"type": "radio", "output": "radio/", "input": "philip_marlowe/", "chunk_required": False}]
 
         for type_entry in audio_property_list:
 
+            if type_entry['type'] != 'YT_lecture':
+                continue
+
             chunk_location = os.path.join(global_constants.INPUT_CHUNK_STAGE, type_entry["output"])
             if type_entry["chunk_required"]:
                 func_lib.save_to_chunks(global_constants.INPUT_DATA_STAGE, chunk_location, type_entry["input"])
 
             main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
-            output_file_tag = "REFACTORED" + "_" + "PODCAST" + "_VERSION_" + global_constants.CAPTCHA_TYPE
+            output_file_tag = "INDIAN_REFACTORED" + "_" + "PODCAST" + "_VERSION_" + global_constants.CAPTCHA_TYPE
 
             prepare_for_user_study(chunk_location, type_entry["type"], main_process_start_time, output_file_tag, global_constants.OUTPUT_DATA_DETAILS_STAGE,
                                    file_ending=".wav")
 
     except Exception as e:
         logging.error(str(e))
+        print(str(e))
 
 
 if __name__ == '__main__':

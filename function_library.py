@@ -15,7 +15,7 @@ from global_constants import *
 # (v3) (a) full phrase with last two words with noise; (b) full phrase with full noise
 # (v4) full phrase with full noise
 
-MINIMUM_NUMBER_OF_CHAR = 4
+MINIMUM_NUMBER_OF_CHAR = 3
 
 USE_ONLY_TWO_WORDS = False
 USE_LAST_TWO_WORD = False
@@ -26,6 +26,9 @@ if CAPTCHA_TYPE == "2":
     USE_LAST_TWO_WORD = True
     NOISE_THROUGH_OUT = True
     MINIMUM_NUMBER_OF_CHAR = 5
+
+    # Reset back to produce loads of data
+    MINIMUM_NUMBER_OF_CHAR = 3
 
 elif CAPTCHA_TYPE == "3a":
     USE_ONLY_TWO_WORDS = False

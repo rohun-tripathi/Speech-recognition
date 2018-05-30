@@ -10,7 +10,6 @@ Shared under the MIT License.
 It requires uses pydub, http://pydub.com, for audio file manipulation, watson-developer-cloud for Speech to Text conversion and nltk corpus for word validations.
 
 ### Requirements:
-
     python 3.3-3.6. Should work with minimal tweaks for python 2.7
     pydub - pip install pydub
     watson-developer-cloud - pip install watson-developer-cloud
