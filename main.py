@@ -30,7 +30,6 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
     Allocate to different Captcha Types
     Execute CAPTCHA generation for each file
     log eligible CAPTCHA files
-
     """
 
     file_list = glob.glob(study_input_folder + os.path.sep + "*" + file_ending)
@@ -125,7 +124,7 @@ def main():
                 func_lib.save_to_chunks(global_constants.INPUT_DATA_STAGE, chunk_location, type_entry["input"])
 
             main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
-            output_file_tag = "INDIAN_REFACTORED" + "_" + "PODCAST" + "_VERSION_" + global_constants.CAPTCHA_TYPE
+            output_file_tag = "_".join(["REBOOT", type_entry['type'], global_constants.CAPTCHA_TYPE])
 
             prepare_for_user_study(chunk_location, type_entry["type"], main_process_start_time, output_file_tag, global_constants.OUTPUT_DATA_DETAILS_STAGE,
                                    file_ending=".wav")

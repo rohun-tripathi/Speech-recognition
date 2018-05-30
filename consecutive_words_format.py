@@ -89,9 +89,9 @@ def call_for_different_word_length(audio, initial_objects, first_object, second_
 
     audio_start_offset = audio_start_time - len(silence) / 1000
 
-    # If we find first appropriate, then pack up.
     stt_confident_object = first_object if first_easy else second_object
-    reduced_word, is_lowered_sufficiently = \
+    # As soon as we find the first lowered word, we return.
+    _, is_lowered_sufficiently = \
         func_lib.check_word_confidence(word_list, [stt_confident_object], audio_start_offset)
 
     if is_lowered_sufficiently:

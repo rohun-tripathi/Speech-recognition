@@ -90,7 +90,8 @@ def check_word_confidence(predicted_word_list, original_word_list, audio_start_o
                 get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word,
                                          predicted_word_list)
 
-            if detected_confidence < 0.5:
+            # Setting the detected_confidence requirement to 0 for eligible clips
+            if detected_confidence == 0:
                 return stt_word, True
 
     return None, False
@@ -246,6 +247,8 @@ def lies_between_start_end(start_time, end_time, stt_start_time, stt_end_time):
 
 
 def get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word, word_list):
+
+    # TODO - check only against the top alternative. If the alternatives are sorted, check the object at index 0.
     for word_object in word_list:
         for alternative in word_object.word_alternatives:
             if alternative.word == stt_word:
