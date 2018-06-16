@@ -315,18 +315,18 @@ def is_length_within_limits(word_list):
 
     if len(word_list) == 2:
         if end - start > 2:
-            print("Clip Length of two words more than maximum")
+            # print("Clip Length of two words more than maximum")
             return False
 
     else:
         if end - start > 4:
-            print("Clip Length of full phrase more than maximum")
+            # print("Clip Length of full phrase more than maximum")
             return False
         elif len(word_list) > 7:
-            print("Word Length of full phrase more than maximum")
+            # print("Word Length of full phrase more than maximum")
             return False
         elif len(word_list) != 2 and len(word_list) < 4:
-            print("Word Length of full phrase less than minimum")
+            # print("Word Length of full phrase less than minimum")
             return False
 
     return True

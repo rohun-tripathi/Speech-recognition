@@ -1,7 +1,7 @@
 import os
 
 import global_constants
-import main
+import re
 import function_library as func_lib
 
 IGNORE_START_WORDS = 6
@@ -47,6 +47,10 @@ def get_noisy_beep_audio(beep, final_audio, first_word_audio, initial_audio, lon
                       first_word_audio.overlay(noise, loop=True) + second_word_audio.overlay(noise, loop=True) + \
                       long_silence.overlay(noise, loop=True) + beep + silence + final_audio + silence
     return noisy_audio
+
+
+def find_whole_word(w):
+    return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
 
 
 def call_for_different_word_length(audio, initial_objects, first_object, second_object, final_objects, noise,
@@ -95,7 +99,8 @@ def call_for_different_word_length(audio, initial_objects, first_object, second_
         func_lib.check_word_confidence(word_list, [stt_confident_object], audio_start_offset)
 
     if is_lowered_sufficiently:
-        export_audio_patterns(initial_audio, first_word_audio, second_word_audio, final_audio, noisy_audio, noise,
+        if not find_whole_word(stt_confident_object.word)(transcription[0]['transcript']):
+            export_audio_patterns(initial_audio, first_word_audio, second_word_audio, final_audio, noisy_audio, noise,
                               required_out_file_name, silence)
 
     return is_lowered_sufficiently, row
@@ -224,11 +229,6 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
             first_word_object = word_object_list[word_index - 1]
             second_word_object = word_object_list[word_index]
 
-            if not func_lib.is_word_set_eligible([first_word_object, second_word_object]):
-                # print("Skipped words because word set not eligible")
-                word_index += 1
-                continue
-
             if not func_lib.is_length_within_limits([first_word_object, second_word_object]):
                 # print("Skipped words because word length is not within limits")
                 word_index += 1
@@ -281,6 +281,11 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
             final_word_objects = word_object_list[word_index + 1:transcription_end_index + 1]
 
             joined_word_list = initial_objects + [first_word_object, second_word_object] + final_word_objects
+            if not func_lib.is_word_set_eligible(joined_word_list):
+                # print("Skipped words because word set not eligible")
+                word_index += 1
+                continue
+
             if not func_lib.is_length_within_limits(joined_word_list):
                 # print("Skipped words because word length is not within limits")
                 word_index += 1
