@@ -175,7 +175,7 @@ def get_text_from_speech(file_name, extract_speaker):
     with open(file_name, 'rb') as audio_file:
         return speech_to_text.recognize(audio_file, content_type='audio/wav', timestamps=True,
                                         speaker_labels=extract_speaker,
-                                        word_confidence=True, word_alternatives_threshold=0.01)
+                                        word_confidence=True, word_alternatives_threshold=0.0001)
 
 def convertToSingleChannel(inp, outp):
     subprocess.call(['ffmpeg', "-loglevel", "panic", '-y', '-i', inp, '-vn', '-ar', '44100', '-ac', '1', '-f', 'wav', outp])
