@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import sys
+import subprocess
 
 from nltk.corpus import wordnet
 from nltk.corpus import words
@@ -83,14 +84,9 @@ def check_word_confidence(predicted_word_list, original_word_list, audio_start_o
             stt_start_time = stt_object.start_time - audio_start_offset
             stt_end_time = stt_object.end_time - audio_start_offset
 
-            # Initialized to 0, to denote that the sst could not detect the required word
-            detected_confidence = 0
+            detected_confidence = get_predicted_confidence(stt_end_time, stt_start_time, stt_word, predicted_word_list)
 
-            detected_confidence = \
-                get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word,
-                                         predicted_word_list)
-
-            # Setting the detected_confidence requirement to 0 for eligible clips
+            # Setting the detected_confidence == 0 for eligible clips
             if detected_confidence == 0:
                 return stt_word, True
 
@@ -181,22 +177,28 @@ def get_text_from_speech(file_name, extract_speaker):
                                         speaker_labels=extract_speaker,
                                         word_confidence=True, word_alternatives_threshold=0.01)
 
+def convertToSingleChannel(inp, outp):
+    subprocess.call(['ffmpeg', "-loglevel", "panic", '-y', '-i', inp, '-vn', '-ar', '44100', '-ac', '1', '-f', 'wav', outp])
+
 
 # noinspection PyBroadException
 def transcribe_robustly(file_name, speakers=False):
     audio_file = AudioSegment.from_file(file_name, "wav")
     if audio_file.frame_rate < 16000:
         error_message = "Frame Rate below 16000. This file has to be abandoned."
-        print(error_message + " " + file_name + " frame rate " + str(audio_file.frame_rate))
+        # print(error_message + " " + file_name + " frame rate " + str(audio_file.frame_rate))
         raise Exception(error_message)
 
+    # what if it is already a MONO WAV? Let's see.
+    convertToSingleChannel(file_name, "/tmp/audio.wav")
+
     try:
-        result = get_text_from_speech(file_name, speakers)
+        result = get_text_from_speech("/tmp/audio.wav", speakers)
     except Exception:
         try:
-            result = get_text_from_speech(file_name, speakers)
-        except Exception:
-            return {}
+            result = get_text_from_speech("/tmp/audio.wav", speakers)
+        except Exception as e:
+            raise TimeoutError("Transcription Failed", e)
 
     return result
 
@@ -246,15 +248,21 @@ def lies_between_start_end(start_time, end_time, stt_start_time, stt_end_time):
         start_time < stt_start_time and stt_end_time < end_time)
 
 
-def get_predicted_confidence(detected_confidence, stt_end_time, stt_start_time, stt_word, word_list):
-
-    # TODO - check only against the top alternative. If the alternatives are sorted, check the object at index 0.
+def get_predicted_confidence(stt_end_time, stt_start_time, stt_word, word_list):
+    # Check only the top prediction
     for word_object in word_list:
-        for alternative in word_object.word_alternatives:
-            if alternative.word == stt_word:
-                if lies_between_start_end(alternative.start_time, alternative.end_time, stt_start_time, stt_end_time):
-                    return alternative.confidence
-    return detected_confidence
+        if word_object.word == stt_word:
+            if lies_between_start_end(word_object.start_time, word_object.end_time, stt_start_time, stt_end_time):
+                return word_object.confidence
+
+    # Check against all alternatives
+    # for word_object in word_list:
+    #     for alternative in word_object.word_alternatives:
+    #         if alternative.word == stt_word:
+    #             if lies_between_start_end(alternative.start_time, alternative.end_time, stt_start_time, stt_end_time):
+    #                 return alternative.confidence
+
+    return 0
 
 
 # Speaker #################################################

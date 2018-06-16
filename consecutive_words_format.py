@@ -85,7 +85,7 @@ def call_for_different_word_length(audio, initial_objects, first_object, second_
     for word_object in word_list:
         row.extend([word_object.word, word_object.confidence])
 
-    print("Transcription : " + str(transcription) + "\nResultant Prediction : " + str(result_dict) + "\n")
+    # print("Transcription : " + str(transcription) + "\nResultant Prediction : " + str(result_dict) + "\n")
 
     audio_start_offset = audio_start_time - len(silence) / 1000
 
@@ -209,15 +209,15 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
 
             if len(res_word[word_index]) < func_lib.MINIMUM_NUMBER_OF_CHAR or \
                             len(res_word[word_index - 1]) < func_lib.MINIMUM_NUMBER_OF_CHAR:
-                print("Skipped words because one is less than minimum no_of_char_per_word: " +
-                      str(res_word[word_index - 1]) + " " + str(res_word[word_index]))
+                # print("Skipped words because one is less than minimum no_of_char_per_word: " +
+                #       str(res_word[word_index - 1]) + " " + str(res_word[word_index]))
                 word_index += 1
                 continue
 
             if (len(res_word[word_index]) < func_lib.MINIMUM_NUMBER_OF_CHAR + 1 and
                         len(res_word[word_index - 1]) < func_lib.MINIMUM_NUMBER_OF_CHAR + 1):
-                print("Skipped words because both are less than no_of_char_per_word + 1 chars: " +
-                      str(res_word[word_index - 1]) + " " + str(res_word[word_index]))
+                # print("Skipped words because both are less than no_of_char_per_word + 1 chars: " +
+                #       str(res_word[word_index - 1]) + " " + str(res_word[word_index]))
                 word_index += 1
                 continue
 
@@ -225,12 +225,12 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
             second_word_object = word_object_list[word_index]
 
             if not func_lib.is_word_set_eligible([first_word_object, second_word_object]):
-                print("Skipped words because word set not eligible")
+                # print("Skipped words because word set not eligible")
                 word_index += 1
                 continue
 
             if not func_lib.is_length_within_limits([first_word_object, second_word_object]):
-                print("Skipped words because word length is not within limits")
+                # print("Skipped words because word length is not within limits")
                 word_index += 1
                 continue
 
@@ -282,21 +282,21 @@ def user_study_function(file_name, user_study_output, extracted_out_put_filename
 
             joined_word_list = initial_objects + [first_word_object, second_word_object] + final_word_objects
             if not func_lib.is_length_within_limits(joined_word_list):
-                print("Skipped words because word length is not within limits")
+                # print("Skipped words because word length is not within limits")
                 word_index += 1
                 continue
 
             if (not func_lib.USE_LAST_TWO_WORD and len(initial_objects) == 0) or (
                         not (func_lib.USE_LAST_TWO_WORD or func_lib.USE_ONLY_TWO_WORDS) and len(final_word_objects) == 0):
-                print("Skipped words because either initial or final words are empty: " + str(initial_objects)
-                      + str(final_word_objects))
+                # print("Skipped words because either initial or final words are empty: " + str(initial_objects)
+                #       + str(final_word_objects))
                 word_index += 1
                 continue
 
             # If there are more than one speakers, this clip is not considered.
             if not func_lib.is_speaker_unique(speaker_list, word_object_list[transcription_start_index].start_time,
                                               word_object_list[transcription_end_index + 1].end_time):
-                print("Skipped words because number of speakers over limit")
+                # print("Skipped words because number of speakers over limit")
                 word_index += 1
                 continue
 

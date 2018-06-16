@@ -12,6 +12,8 @@ import function_library as func_lib
 import consecutive_words_format
 import word_list_format
 
+from tqdm import tqdm
+
 # Logging
 logs_folder = 'logs'
 os.makedirs(logs_folder, exist_ok=True)
@@ -38,9 +40,10 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
 
     length_portion = int(len(file_list) / 3)
 
-    if global_constants.CAPTCHA_TYPE == "2":
+    # Switched 3b and 2 on June 16th 2018.
+    if global_constants.CAPTCHA_TYPE == "3b":
         file_list = file_list[length_portion * 0: length_portion * 1]
-    elif global_constants.CAPTCHA_TYPE == "3b":
+    elif global_constants.CAPTCHA_TYPE == "2":
         file_list = file_list[length_portion * 1: length_portion * 2]
     elif global_constants.CAPTCHA_TYPE == "4":
         file_list = file_list[length_portion * 2: length_portion * 3]
@@ -54,7 +57,7 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
 
     source_regex = r"(?<=" + re.escape(study_input_folder) + r").+?(?=.wav)"
 
-    for file_index, file_entry in enumerate(file_list):
+    for file_index, file_entry in tqdm(enumerate(file_list)):
         try:
             func_lib.check_and_clip_loud_volume(file_entry)
 
@@ -93,6 +96,9 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
                     selected_csv_writer = csv.writer(selected_strings_layout)
                 selected_csv_writer.writerows(selected_rows)
                 selected_rows = []
+
+        except TimeoutError as timeOut:
+            print("Done for now", file_index, file_entry, global_constants.CAPTCHA_TYPE, timeOut)
 
         except Exception as fileException:
             logging.error(str(fileException))
