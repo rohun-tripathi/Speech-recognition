@@ -99,7 +99,10 @@ def call_for_different_word_length(audio, initial_objects, first_object, second_
         func_lib.check_word_confidence(word_list, [stt_confident_object], audio_start_offset)
 
     if is_lowered_sufficiently:
-        if not find_whole_word(stt_confident_object.word)(transcription[0]['transcript']):
+        # Second check - make sure sentence level transcriptions fail
+        is_lowered_sufficiently = find_whole_word(stt_confident_object.word)(transcription[0]['transcript']) is None
+
+        if is_lowered_sufficiently:
             export_audio_patterns(initial_audio, first_word_audio, second_word_audio, final_audio, noisy_audio, noise,
                               required_out_file_name, silence)
 
