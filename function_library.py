@@ -163,9 +163,10 @@ def save_to_chunks(input_data_folder, chunk_output_folder, input_group):
                              format='wav')
 
             successful_chunk_file_list.append(complete_file_name)
-            print("Generated Chunks for : " + complete_file_name)
+            # print("Generated Chunks for : " + complete_file_name)
         except Exception as e:
             failed_chunk_file_list.append(complete_file_name)
+            print("Failed generation of Chunks for : " + complete_file_name)
             print(str(e))
 
     return successful_chunk_file_list, failed_chunk_file_list

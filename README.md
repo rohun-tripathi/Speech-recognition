@@ -47,20 +47,16 @@ It requires uses pydub, http://pydub.com, for audio file manipulation, watson-de
     The entry module to the code base is main.py and example.py.
 
     A command line usage via example.py -
-        python example.py --group "example" --data "/Users/rohuntripathi/speech-recognition-test/audio_data" --input "input_stage" --chunk "chunk_folder" --selected "selected" --audioclippeddata "more_audio"
+        python example.py --group "youtube_lecture" --data "reboot_rerun" --input "input" --chunk "chunk_folder" --selected "selected" --audioclippeddata "other_audio" --produce_chunk
 
-    Values provided:
-          -g GROUP, --group GROUP
-                                data in example sub folder path/name/tag
-          -d DATA, --data DATA  data folder path
-          -i INPUT, --input INPUT
-                                input sub folder
-          -c CHUNK, --chunk CHUNK
-                                chunk sub folder
-          -a AUDIOCLIPPEDDATA, --audioclippeddata AUDIOCLIPPEDDATA
-                                proposed clips for CAPTCHA selection
-          -s SELECTED, --selected SELECTED
-                                final selected CAPTCHA output, on which the STT fails, from the proposed values
+    Values to be provided:
+      -d / --data, Data is the root folder where the input data subfolder should already be stored. All other folders, Input, chunk, selected and audioclippeddata will be RELATIVE to the data folder path.
+      -p --produce_chunk, Whether to produce chunks from the input data or not. Not needed after first run. It's default value is FALSE
+      -g / --group, Group is a name for the data grouping we use in the paper. For example, a group can be youtube_lecture and another can be podcasts.
+      -i / --input, The input sub folder which should already be created and be relative to the folder in Data.
+      -c / --chunk. The chunk sub folder which should be relative to the folder in Data.
+      -a / --audioclippeddata, Proposed clips for CAPTCHA selection before they are sent to IBM for filtering. It should be relative to the folder in Data.
+      -s / --selected, The final selected CAPTCHA output. These are the files to be used for CAPTCHA.
 
     global_constants.py is the configuration file.
         Can set the CAPTCHA to be generated in global_constants.py

@@ -20,7 +20,7 @@ arg_object.add_argument("-i", "--input", help="input sub folder")
 arg_object.add_argument("-c", "--chunk", help="chunk sub folder")
 arg_object.add_argument("-a", "--audioclippeddata", help="Clips sent to IBM server for review")
 arg_object.add_argument("-s", "--selected", help="Clips sent to IBM and selected for CAPTCHA")
-arg_object.add_argument("-p", "--produce_chunk", action='store_true')
+arg_object.add_argument("-p", "--produce_chunk", action='store_true', help='Produce chunks from the input data or not')
 
 args = arg_object.parse_args()
 
@@ -57,6 +57,7 @@ try:
     chunk_location = join(constant.INPUT_CHUNK_STAGE, args.group)
 
     if args.produce_chunk:
+        print("Begin Generating Chunk of input Audio")
         logging.info("Begin Generating Chunk of input Audio")
         function_library.save_to_chunks(constant.INPUT_DATA_STAGE, chunk_location, args.group)
     else:
