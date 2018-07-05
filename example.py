@@ -10,18 +10,19 @@ import traceback
 
 import logging
 
+import os
+
 arg_object = argparse.ArgumentParser()
 
-arg_object.add_argument("-g", "--group", help="data in example sub folder path/name/tag")
-arg_object.add_argument("-d", "--data", help="data folder path")
+arg_object.add_argument("-g", "--group", help="data in example sub folder path/name/tag", default="example")
+arg_object.add_argument("-d", "--data", help="data folder path. Other folders are relative to this folder")
 arg_object.add_argument("-i", "--input", help="input sub folder")
 arg_object.add_argument("-c", "--chunk", help="chunk sub folder")
-arg_object.add_argument("-s", "--selected", help="final selected CAPTCHA output")
-arg_object.add_argument("-a", "--audioclippeddata", help="proposed clips for CAPTCHA selection")
+arg_object.add_argument("-a", "--audioclippeddata", help="Clips sent to IBM server for review")
+arg_object.add_argument("-s", "--selected", help="Clips sent to IBM and selected for CAPTCHA")
+arg_object.add_argument("-p", "--produce_chunk", action='store_true')
 
 args = arg_object.parse_args()
-
-folder_group = args.group if args.group is not None else "example"
 
 if args.data is not None:
     constant.DATA_FOLDER = args.data
@@ -38,26 +39,32 @@ if args.selected is not None:
 if args.audioclippeddata is not None:
     constant.OUTPUT_DATA_DETAILS_STAGE = join(constant.DATA_FOLDER, args.audioclippeddata)
 
-print("Values provided : ")
+print("Global contants set to : ")
 
-print(folder_group)
-print(constant.DATA_FOLDER)
-print(constant.INPUT_DATA_STAGE)
-print(constant.INPUT_CHUNK_STAGE)
-print(constant.OUTPUT_DATA_SELECTED)
-print(constant.OUTPUT_DATA_DETAILS_STAGE)
+print(args.group)
+print("DATA_FOLDER", constant.DATA_FOLDER)
+print("INPUT_DATA", constant.INPUT_DATA_STAGE)
+print("INPUT_CHUNK", constant.INPUT_CHUNK_STAGE)
+print("OUTPUT_DATA_SELECTED", constant.OUTPUT_DATA_SELECTED)
+print("OUTPUT_DATA_DETAILS", constant.OUTPUT_DATA_DETAILS_STAGE)
+
+for output_path in [constant.INPUT_CHUNK_STAGE, constant.OUTPUT_DATA_SELECTED, constant.OUTPUT_DATA_DETAILS_STAGE]:
+    os.makedirs(output_path, exist_ok=True)
 
 try:
     main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
     output_file_tag = "UNIT_TEST_" + constant.CAPTCHA_TYPE
-    chunk_location = join(constant.INPUT_CHUNK_STAGE, folder_group)
+    chunk_location = join(constant.INPUT_CHUNK_STAGE, args.group)
 
-    logging.info("Begin Generating Chunk of input Audio")
-    function_library.save_to_chunks(constant.INPUT_DATA_STAGE, chunk_location, folder_group)
+    if args.produce_chunk:
+        logging.info("Begin Generating Chunk of input Audio")
+        function_library.save_to_chunks(constant.INPUT_DATA_STAGE, chunk_location, args.group)
+    else:
+        logging.info("Not producing chunks of input Audio")
 
     logging.info("Begin Generating Audio reCAPTCHA")
-    main.prepare_for_user_study(chunk_location, folder_group, main_process_start_time, output_file_tag,
-                                constant.OUTPUT_DATA_DETAILS_STAGE)
+    main.produce_clips_for_user_study(chunk_location, args.group, main_process_start_time, output_file_tag,
+                                      constant.OUTPUT_DATA_DETAILS_STAGE)
     logging.info("Exiting")
 
 except OSError as osE:

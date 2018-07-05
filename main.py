@@ -26,8 +26,8 @@ logging.basicConfig(filename=os.path.join(process_logs_folder, 'info_' + global_
                     level=logging.INFO)
 
 
-def prepare_for_user_study(study_input_folder, audio_type, process_time, output_file_tag, study_output_folder,
-                           file_ending=".wav", global_csv_writer=None, selected_csv_writer=None):
+def produce_clips_for_user_study(study_input_folder, audio_type, process_time, output_file_tag, study_output_folder,
+                                 file_ending=".wav", global_csv_writer=None, selected_csv_writer=None):
     """Read the files
     Allocate to different Captcha Types
     Execute CAPTCHA generation for each file
@@ -36,48 +36,51 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
 
     file_list = glob.glob(study_input_folder + os.path.sep + "*" + file_ending)
 
-    Random(4).shuffle(file_list)
+    # Set to a constant seed - Pick a number you like
+    Random(2018).shuffle(file_list)
 
-    length_portion = int(len(file_list) / 3)
+    partition_length = int(len(file_list) / 3)
 
-    # Switched 3b and 2 on June 16th 2018.
     if global_constants.CAPTCHA_TYPE == "3b":
-        file_list = file_list[length_portion * 0: length_portion * 1]
-    elif global_constants.CAPTCHA_TYPE == "2":
-        file_list = file_list[length_portion * 1: length_portion * 2]
-    elif global_constants.CAPTCHA_TYPE == "4":
-        file_list = file_list[length_portion * 2: length_portion * 3]
-    elif global_constants.CAPTCHA_TYPE == "3a":
-        raise Exception("3a not generated anymore")
-    else:
-        raise Exception("Captcha Type not supported")
+        file_list = file_list[partition_length * 0: partition_length * 1]
 
-    gbl_rows = []
+    elif global_constants.CAPTCHA_TYPE == "2":
+        file_list = file_list[partition_length * 1: partition_length * 2]
+
+    elif global_constants.CAPTCHA_TYPE == "4":
+        file_list = file_list[partition_length * 2: partition_length * 3]
+
+    else:
+        raise Exception("Captcha Type not supported " + global_constants.CAPTCHA_TYPE)
+
+    # Stores a list of all the clips sent to the IBM network for clip verification
+    global_clip_rows = []
+    # Stores a list of only those clips which beat the IBM system.
     selected_rows = []
 
     source_regex = r"(?<=" + re.escape(study_input_folder) + r").+?(?=.wav)"
 
-    for file_index, file_entry in tqdm(enumerate(file_list)):
+    for file_index, file_path in tqdm(enumerate(file_list)):
         try:
-            func_lib.check_and_clip_loud_volume(file_entry)
+            func_lib.check_and_clip_loud_volume(file_path)
 
-            extract_just_name = re.findall(source_regex, file_entry)
-            if len(extract_just_name) != 0:
-                extract_just_name = extract_just_name[0]
+            extract_name = re.findall(source_regex, file_path)
+            if len(extract_name) != 0:
+                extract_name = extract_name[0]
             else:
                 continue
-            extract_just_name = extract_just_name + "_" + process_time
+            extract_name = extract_name + "_" + process_time
 
             if global_constants.CAPTCHA_TYPE == "4":
-                word_list_format.user_study_function(file_entry, study_output_folder, extract_just_name, audio_type,
-                                                     gbl_rows, selected_rows)
+                word_list_format.user_study_function(file_path, study_output_folder, extract_name, audio_type,
+                                                     global_clip_rows, selected_rows)
             else:
-                consecutive_words_format.user_study_function(file_entry, study_output_folder, extract_just_name,
-                                                             audio_type, gbl_rows, selected_rows)
+                consecutive_words_format.user_study_function(file_path, study_output_folder, extract_name,
+                                                             audio_type, global_clip_rows, selected_rows)
 
-            logging.info("Done for : " + file_entry + " output : " + str(gbl_rows) + str(selected_rows))
+            logging.info("Done for : " + file_path + " output : " + str(global_clip_rows) + str(selected_rows))
 
-            if len(gbl_rows) > 0:
+            if len(global_clip_rows) > 0:
 
                 # Lazy load because the system other wise creates loads of empty excel files for test procedures.
                 if global_csv_writer is None:
@@ -85,8 +88,8 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
                                                     output_file_tag + ".csv"), "w", newline='')
                     global_csv_writer = csv.writer(file_layout)
 
-                global_csv_writer.writerows(gbl_rows)
-                gbl_rows = []
+                global_csv_writer.writerows(global_clip_rows)
+                global_clip_rows = []
             if len(selected_rows) > 0:
 
                 # Lazy load because the system other wise creates loads of empty excel files for test procedures.
@@ -98,13 +101,15 @@ def prepare_for_user_study(study_input_folder, audio_type, process_time, output_
                 selected_rows = []
 
         except TimeoutError as timeOut:
-            print("Done for now", file_index, file_entry, global_constants.CAPTCHA_TYPE, timeOut)
+            logging.error("Probably reached the limit on the IBM resources. Processed till - " + str(file_index))
+            print("TimeoutError!\nProbably reached the limit on the IBM resources. Processed till - ", file_index, file_path, global_constants.CAPTCHA_TYPE, timeOut)
+            return
 
         except Exception as fileException:
             logging.error(str(fileException))
 
 
-def main():
+def debug():
     """Chunk input files. Required because 30 min files don't return.
     The execute prepare_for_user_study for each audio source type.
 
@@ -132,8 +137,8 @@ def main():
             main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
             output_file_tag = "_".join(["REBOOT", type_entry['type'], global_constants.CAPTCHA_TYPE])
 
-            prepare_for_user_study(chunk_location, type_entry["type"], main_process_start_time, output_file_tag, global_constants.OUTPUT_DATA_DETAILS_STAGE,
-                                   file_ending=".wav")
+            produce_clips_for_user_study(chunk_location, type_entry["type"], main_process_start_time, output_file_tag, global_constants.OUTPUT_DATA_DETAILS_STAGE,
+                                         file_ending=".wav")
 
     except Exception as e:
         logging.error(str(e))
@@ -141,4 +146,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    debug()
