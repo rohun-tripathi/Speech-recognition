@@ -64,10 +64,9 @@ def produce_clips_for_user_study(study_input_folder, audio_type, process_time, o
         try:
             func_lib.check_and_clip_loud_volume(file_path)
 
-            extract_name = re.findall(source_regex, file_path)
-            if len(extract_name) != 0:
-                extract_name = extract_name[0]
-            else:
+            _, extract_name = os.path.split(file_path)
+            extract_name, _ = os.path.splitext(extract_name)
+            if extract_name == "":
                 continue
             extract_name = extract_name + "_" + process_time
 
@@ -101,12 +100,12 @@ def produce_clips_for_user_study(study_input_folder, audio_type, process_time, o
                 selected_rows = []
 
         except TimeoutError as timeOut:
-            logging.error("Probably reached the limit on the IBM resources. Processed till - " + str(file_index))
+            logging.exception("Probably reached the limit on the IBM resources. Processed till - " + str(file_index))
             print("TimeoutError!\nProbably reached the limit on the IBM resources. Processed till - ", file_index, file_path, global_constants.CAPTCHA_TYPE, timeOut)
             return
 
         except Exception as fileException:
-            logging.error(str(fileException))
+            logging.exception(str(fileException))
 
 
 def debug():
@@ -141,7 +140,7 @@ def debug():
                                          file_ending=".wav")
 
     except Exception as e:
-        logging.error(str(e))
+        logging.exception(str(e))
         print(str(e))
 
 

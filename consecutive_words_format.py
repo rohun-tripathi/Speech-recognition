@@ -99,7 +99,7 @@ def call_for_different_word_length(audio, initial_objects, first_object, second_
         func_lib.check_word_confidence(word_list, [stt_confident_object], audio_start_offset)
 
     if is_lowered_sufficiently:
-        # Second check - make sure sentence level transcriptions fail
+        # Check the sentence level transcription fails as well and update is_lowered_sufficiently accordingly.
         is_lowered_sufficiently = find_whole_word(stt_confident_object.word)(transcription[0]['transcript']) is None
 
         if is_lowered_sufficiently:

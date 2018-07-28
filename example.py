@@ -14,12 +14,12 @@ import os
 
 arg_object = argparse.ArgumentParser()
 
-arg_object.add_argument("-g", "--group", help="data in example sub folder path/name/tag", default="example")
-arg_object.add_argument("-d", "--data", help="data folder path. Other folders are relative to this folder")
-arg_object.add_argument("-i", "--input", help="input sub folder")
-arg_object.add_argument("-c", "--chunk", help="chunk sub folder")
-arg_object.add_argument("-a", "--audioclippeddata", help="Clips sent to IBM server for review")
-arg_object.add_argument("-s", "--selected", help="Clips sent to IBM and selected for CAPTCHA")
+arg_object.add_argument("-g", "--group", help="data in example sub folder path/name/tag", default="youtube_lecture")
+arg_object.add_argument("-d", "--data", help="data folder path. Other folders are relative to this folder", default="reboot_rerun")
+arg_object.add_argument("-i", "--input", help="input sub folder", default="input")
+arg_object.add_argument("-c", "--chunk", help="chunk sub folder", default="chunk_folder")
+arg_object.add_argument("-a", "--audioclippeddata", help="Clips sent to IBM server for review", default='other_audio')
+arg_object.add_argument("-s", "--selected", help="Clips sent to IBM and selected for CAPTCHA", default='selected')
 arg_object.add_argument("-p", "--produce_chunk", action='store_true', help='Produce chunks from the input data or not')
 
 args = arg_object.parse_args()
