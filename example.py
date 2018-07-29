@@ -21,7 +21,7 @@ arg_object.add_argument("-c", "--chunk", help="chunk sub folder", default="chunk
 arg_object.add_argument("-a", "--audioclippeddata", help="Clips sent to IBM server for review", default='other_audio')
 arg_object.add_argument("-s", "--selected", help="Clips sent to IBM and selected for CAPTCHA", default='selected')
 arg_object.add_argument("-p", "--produce_chunk", action='store_true', help='Produce chunks from the input data or not')
-
+arg_object.add_argument("-t", "--captcha_type", help="The CAPTCHA type to be generated", default="3b")
 args = arg_object.parse_args()
 
 if args.data is not None:
@@ -39,21 +39,24 @@ if args.selected is not None:
 if args.audioclippeddata is not None:
     constant.OUTPUT_DATA_DETAILS_STAGE = join(constant.DATA_FOLDER, args.audioclippeddata)
 
+constant.CAPTCHA_TYPE = args.captcha_type
+
 print("Global contants set to : ")
 
-print(args.group)
+print("Group", args.group)
 print("DATA_FOLDER", constant.DATA_FOLDER)
 print("INPUT_DATA", constant.INPUT_DATA_STAGE)
 print("INPUT_CHUNK", constant.INPUT_CHUNK_STAGE)
 print("OUTPUT_DATA_SELECTED", constant.OUTPUT_DATA_SELECTED)
 print("OUTPUT_DATA_DETAILS", constant.OUTPUT_DATA_DETAILS_STAGE)
+print("CAPTCHA_TYPE", constant.CAPTCHA_TYPE)
 
 for output_path in [constant.INPUT_CHUNK_STAGE, constant.OUTPUT_DATA_SELECTED, constant.OUTPUT_DATA_DETAILS_STAGE]:
     os.makedirs(output_path, exist_ok=True)
 
+output_file_tag = function_library.get_tag(constant.CAPTCHA_TYPE)
 try:
     main_process_start_time = str(datetime.now()).replace(" ", "_").replace(":", "_").replace(".", "_")
-    output_file_tag = "UNIT_TEST_" + constant.CAPTCHA_TYPE
     chunk_location = join(constant.INPUT_CHUNK_STAGE, args.group)
 
     if args.produce_chunk:

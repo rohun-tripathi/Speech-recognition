@@ -62,6 +62,10 @@ speech_to_text = SpeechToTextV1(
 )
 
 
+def get_tag(captcha_type):
+    return "UNIT_TEST_" + captcha_type
+
+
 def get_noise():
     if NOISE_TYPE == "White":
         noise = AudioSegment.from_file(os.path.join("parameter_input", "noise.wav"), format="wav")
