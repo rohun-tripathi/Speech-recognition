@@ -31,16 +31,16 @@ def read_files(file_list, columns):
     return result_dataframe
 
 
-# Copies the N files selected and stored in the log file from the specified source location to "vX" destination folder
-def create_ten(file_dataframe, source, data_version, captcha_type, Test_Data):
+# Copies the files stored in the log file from the specified source location to "Test_Data/vX" folder, X is version no.
+def compile_audio_gt_files(file_dataframe, source, data_version, captcha_type, Test_Data):
 
-    destination = join(constant.DATA_FOLDER, Test_Data, "v" + data_version,
-                       "c" + constant.CAPTCHA_TYPE + "_" + str(datetime.now().timestamp()).replace(".", ""))
-    os.makedirs(destination, exist_ok=True)
+    version_folder = join(constant.DATA_FOLDER, Test_Data, "v" + data_version,
+                          "time_" + str(datetime.now().timestamp()).replace(".", "") + "_c_" + constant.CAPTCHA_TYPE)
+    audio_destination = join(version_folder, "audio")
+    os.makedirs(audio_destination, exist_ok=True)
 
-    dictionary_gt = []
-    audio_name_list = []
-    rows = [["Name", "Captcha", "Word_Detected", "Text_Detected"]]
+    dictionary_gt, audio_name_list = [], []
+    rows = [["Name", "Captcha"]]
 
     for index, row in file_dataframe.iterrows():
         audio_file = row["name"]
@@ -58,43 +58,23 @@ def create_ten(file_dataframe, source, data_version, captcha_type, Test_Data):
         rows.append([audio_file, captcha_type])
 
         audio = AudioSegment.from_file(join(source, audio_file + ".wav"), format="wav")
-        output_path = os.path.join(destination, audio_file + ".wav")
+        output_path = os.path.join(audio_destination, audio_file + ".wav")
         audio.export(output_path, format="wav")
 
-    gt_folder = join(constant.DATA_FOLDER, Test_Data, "v" + data_version, "gt_data")
+    gt_folder = join(version_folder, "gt_data")
     os.makedirs(gt_folder, exist_ok=True)
     json.dump(dictionary_gt, open(os.path.join(gt_folder, "gt" + captcha_type + ".json"), "w"))
 
-    audio_folder = join(constant.DATA_FOLDER, Test_Data, "v" + data_version, "audioname")
+    audio_folder = join(version_folder, "audioname")
     os.makedirs(audio_folder, exist_ok=True)
     json.dump(audio_name_list, open(os.path.join(audio_folder, "aname" + captcha_type + ".json"), "w"))
 
-    selection_folder = join(constant.DATA_FOLDER, Test_Data, "v" + data_version, "selection")
+    selection_folder = join(version_folder, "selection")
     os.makedirs(selection_folder, exist_ok=True)
     with open(os.path.join(selection_folder, "sample" + captcha_type + ".csv"), "w", newline="") as sample_file:
         csv.writer(sample_file).writerows(rows)
 
-
-# Select the entries that pass manual filtering
-def extract_file_list(captcha_type, test_data, data_version):
-    output_directory = os.path.join(constant.DATA_FOLDER, test_data, "v" + data_version)
-    if captcha_type == "2":
-        file_name = os.path.join(output_directory, "audioname", "aname2.json")
-        audio_dict = json.load(open(file_name, "r"))
-        return [entry["audio"] for entry in audio_dict]
-
-    elif captcha_type == "3b":
-        file_name = os.path.join(output_directory, "audioname", "aname3b.json")
-        audio_dict = json.load(open(file_name, "r"))
-        return [entry["audio"] for entry in audio_dict]
-
-    elif captcha_type == "4":
-        file_name = os.path.join(output_directory, "audioname", "aname4.json")
-        audio_dict = json.load(open(file_name, "r"))
-        return [entry["audio"] for entry in audio_dict]
-
-    else:
-        raise NotImplementedError("Unsupported captcha type")
+    return audio_name_list
 
 
 # Argument Parsing code
@@ -124,7 +104,8 @@ print("INPUT_DATA", constant.INPUT_DATA_STAGE)
 print("OUTPUT_DATA_SELECTED", constant.OUTPUT_DATA_SELECTED)
 print("CAPTCHA_TYPE", constant.CAPTCHA_TYPE)
 
-# This tag is used to map the post-processing to a subset of the csv files describing the selected files.
+# This tag is used to filter the total number of files in the csv files for the post-processing step.
+# The files in these filtered subset are compiled and moved to a common location, to be consumed by the Javascript code.
 output_file_tag = function_library.get_tag(constant.CAPTCHA_TYPE)
 
 try:
@@ -139,11 +120,8 @@ try:
                        "second_word"]
 
     file_dataframe = read_files(complete_file_list, column_word)
-    create_ten(file_dataframe, constant.OUTPUT_DATA_SELECTED, args.data_version, constant.CAPTCHA_TYPE, args.test_data)
-
-    # set output directories.
-    audio_list = extract_file_list(constant.CAPTCHA_TYPE, args.test_data, args.data_version)
-    print("Number of audio files compiled - ", len(audio_list))
+    audio_list = compile_audio_gt_files(file_dataframe, constant.OUTPUT_DATA_SELECTED, args.data_version, constant.CAPTCHA_TYPE, args.test_data)
+    print("Number of audio files compiled - " + str(len(audio_list)))
 
 except Exception as uE:
     print("Unknown error. " + str(uE))
