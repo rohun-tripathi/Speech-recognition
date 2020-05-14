@@ -1,9 +1,32 @@
-### AudioCAPTCHA
+### Automatic Generation and Evaluation of Usable and Secure Audio reCAPTCHA
+
+Paper link - https://dl.acm.org/doi/abs/10.1145/3308561.3353777
 
 audioCAPTCHA is a Python module that generates clips to be used Audio CAPTCHA from everyday audio sources. It has been tested for python 3.4-3.6 and will work with minimal tweaks for python 2.7.
 
 audioCAPTCHA is shared for researchers interested in developing audio CAPTCHA clips for research purposes.
 Shared under the MIT License.
+
+If you find this code useful, please consider citing - 
+
+	@inproceedings{10.1145/3308561.3353777,
+	author = {Jain, Mohit and Tripathi, Rohun and Bhansali, Ishita and Kumar, Pratyush},
+	title = {Automatic Generation and Evaluation of Usable and Secure Audio ReCAPTCHA},
+	year = {2019},
+	isbn = {9781450366762},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	url = {https://doi.org/10.1145/3308561.3353777},
+	doi = {10.1145/3308561.3353777},
+	booktitle = {The 21st International ACM SIGACCESS Conference on Computers and Accessibility},
+	pages = {355–366},
+	numpages = {12},
+	keywords = {blind, captcha, evaluation, visually impaired, mturk},
+	location = {Pittsburgh, PA, USA},
+	series = {ASSETS ’19}
+	}
+
+
 
 ### Installation
 
